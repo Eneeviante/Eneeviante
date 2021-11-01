@@ -30,7 +30,6 @@ D:\Kurs\ITechArtBooking\ITechArtBooking\obj\Debug\net5.0\ITechArtBooking.dll
 D:\Kurs\ITechArtBooking\ITechArtBooking\obj\Debug\net5.0\ref\ITechArtBooking.dll
 D:\Kurs\ITechArtBooking\ITechArtBooking\obj\Debug\net5.0\ITechArtBooking.pdb
 D:\Kurs\ITechArtBooking\ITechArtBooking\obj\Debug\net5.0\ITechArtBooking.genruntimeconfig.cache
-D:\Kurs\ITechArtBooking\ITechArtBooking\obj\Debug\net5.0\ITechArtBooking.csproj.CopyComplete
 D:\Kurs\ITechArtBooking\ITechArtBooking\bin\Debug\net5.0\Microsoft.Data.SqlClient.dll
 D:\Kurs\ITechArtBooking\ITechArtBooking\bin\Debug\net5.0\Microsoft.EntityFrameworkCore.dll
 D:\Kurs\ITechArtBooking\ITechArtBooking\bin\Debug\net5.0\Microsoft.EntityFrameworkCore.Abstractions.dll

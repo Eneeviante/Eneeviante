@@ -14,7 +14,8 @@ namespace ITechArtBooking.Controllers
     [ApiController]
     public class ClientController : ControllerBase
     {
-        private readonly ClientService postsService = new ClientService(new ClientsFakeRepository());
+        private readonly ClientService postsService = new(new ClientsFakeRepository());
+
         [HttpGet]
         public List<Client> GetAll()
         {
