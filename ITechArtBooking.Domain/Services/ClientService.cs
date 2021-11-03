@@ -15,7 +15,7 @@ namespace ITechArtBooking.Domain.Services
         {
             clientRepository = _clientsRepository ?? throw new ArgumentNullException(nameof(clientRepository));
         }
-        public List<Client> GetAll()
+        public IEnumerable<Client> GetAll()
         {
             return clientRepository.GetAll();
         }

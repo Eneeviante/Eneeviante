@@ -1,3 +1,4 @@
+using ITechArtBooking.Domain.Interfaces;
 using ITechArtBooking.Infrastucture.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -27,13 +28,19 @@ namespace ITechArtBooking
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<EFClientDBContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
-
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ITechArtBooking", Version = "v1" });
             });
+            string connection = Configuration.GetConnectionString("DefaultConnection");
+            //gets the options object that configures the database for the context class
+            services.AddDbContext<EFBookingDBContext>(options => options.UseSqlServer(connection));
+
+            services.AddTransient<IClientRepository, EFClientRepository>();         //defines a service that creates a new instance
+                                                                                    //of the EFClientRepository class
+                                                                                    //every time an instance of the IClientRepository type is required
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

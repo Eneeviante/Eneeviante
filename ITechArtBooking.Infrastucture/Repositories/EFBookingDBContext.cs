@@ -8,10 +8,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ITechArtBooking.Infrastucture.Repositories
 {
-    public class EFClientDBContext : DbContext
+    public class EFBookingDBContext : DbContext
     {
-        public EFClientDBContext(DbContextOptions<EFClientDBContext> options) : base(options)
+        public DbSet<Client> Clients { get; set; }
+        public EFBookingDBContext(DbContextOptions<EFBookingDBContext> options) : base(options)
         { }
-        public DbSet<Client> TodoItems { get; set; }
     }
 }

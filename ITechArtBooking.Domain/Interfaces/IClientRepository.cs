@@ -9,6 +9,10 @@ namespace ITechArtBooking.Domain.Interfaces
 {
     public interface IClientRepository
     {
-        public List<Client> GetAll();
+        public IEnumerable<Client> GetAll();
+        public Client Get(long id);
+        void Create(Client client);
+        void Update(Client client);
+        Client Delete(long id);
     }
 }

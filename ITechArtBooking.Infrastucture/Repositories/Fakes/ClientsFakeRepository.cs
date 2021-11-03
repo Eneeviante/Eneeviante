@@ -8,7 +8,7 @@ using ITechArtBooking.Domain.Models;
 
 namespace ITechArtBooking.Infrastucture.Repositories.Fakes
 {
-    public class ClientsFakeRepository : IClientRepository
+    /*public class ClientsFakeRepository : IClientRepository
     {
         public List<Client> GetAll()
         {
@@ -24,5 +24,5 @@ namespace ITechArtBooking.Infrastucture.Repositories.Fakes
                 },
             }; ;
         }
-    }
+    }*/
 }
