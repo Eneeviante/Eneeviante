@@ -43,32 +43,44 @@ namespace ITechArtBooking.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] Client client)
+        public void Create(string firstName, string middleName,
+            string LastName, string Number)
         {
-            if (client == null) {
-                return BadRequest();
-            }
-            else {
-                clientRepository.Create(client);
-                return CreatedAtRoute("GetItem", new { id = client.Id }, client);
-            }
+            clientRepository.Create(firstName, middleName, LastName, Number);
         }
+        //public IActionResult Create([FromBody] Client client)
+        //{
+        //    if (client == null) {
+        //        return BadRequest();
+        //    }
+        //    else {
+        //        clientRepository.Create(client);
+        //        return CreatedAtRoute("GetItem", new { id = client.Id }, client);
+        //    }
+        //}
+
 
         [HttpPut("{id}")]
-        public IActionResult Update(long id, [FromBody] Client updatedClient)
+        public void Update(long id, string firstName, string middleName,
+            string lastName, string Number)
         {
-            if (updatedClient == null || updatedClient.Id != id) {
-                return BadRequest();
-            }
-
-            var client = clientRepository.Get(id);
-            if (client == null) {
-                return NotFound();
-            }
-
-            clientRepository.Update(updatedClient);
-            return RedirectToRoute("GetAllItems");
+            clientRepository.Update(id, firstName, middleName,
+            lastName, Number);
         }
+        //public IActionResult Update(long id, [FromBody] Client updatedClient)
+        //{
+        //    if (updatedClient == null || updatedClient.Id != id) {
+        //        return BadRequest();
+        //    }
+
+        //    var client = clientRepository.Get(id);
+        //    if (client == null) {
+        //        return NotFound();
+        //    }
+
+        //    clientRepository.Update(updatedClient);
+        //    return RedirectToRoute("GetAllItems");
+        //}
 
         [HttpDelete("{id}")]
         public IActionResult Delete(long id)

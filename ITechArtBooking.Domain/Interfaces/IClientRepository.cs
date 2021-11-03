@@ -11,8 +11,11 @@ namespace ITechArtBooking.Domain.Interfaces
     {
         public IEnumerable<Client> GetAll();
         public Client Get(long id);
-        void Create(Client client);
-        void Update(Client client);
+        void Create(string firstName, string middleName,
+            string lastName, string Number);
+        //void Create(Client client);
+        void Update(long id, string firstName, string middleName,
+            string lastName, string Number);
         Client Delete(long id);
     }
 }
