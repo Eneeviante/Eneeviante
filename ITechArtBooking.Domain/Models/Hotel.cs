@@ -9,8 +9,7 @@ namespace ITechArtBooking.Domain.Models
     {
         public long Id { get; set; }
         public string Name { get; set; }
-        public string StarNumber { get; set; }
-        public List<Review> Reviews { get; set; }
-        public List<Category> Categories { get; set; }
+        public int StarNumber { get; set; }
+        public string Description { get; set; }
     }
 }

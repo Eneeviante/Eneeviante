@@ -37,9 +37,9 @@ namespace ITechArtBooking
             //gets the options object that configures the database for the context class
             services.AddDbContext<EFBookingDBContext>(options => options.UseSqlServer(connection));
 
-            services.AddTransient<IClientRepository, EFClientRepository>();         //defines a service that creates a new instance
-                                                                                    //of the EFClientRepository class
-                                                                                    //every time an instance of the IClientRepository type is required
+            services.AddTransient<IClientRepository, EFClientRepository>();          //defines a service that creates a new instance
+            services.AddTransient<IHotelRepository, EFHotelRepository>();            //of the EFClientRepository class
+                                                                                     //every time an instance of the IClientRepository type is required
 
         }
 

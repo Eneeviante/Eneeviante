@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ITechArtBooking.Domain.Services;
+//using ITechArtBooking.Domain.Services;
 using ITechArtBooking.Domain.Models;
 //using ITechArtBooking.Infrastucture.Repositories.Fakes;
 using ITechArtBooking.Domain.Interfaces;
@@ -23,13 +23,13 @@ namespace ITechArtBooking.Controllers
             clientRepository = _clientRepository;
         }
 
-        [HttpGet(Name = "GetAllItems")]
+        [HttpGet(Name = "GetAllClients")]
         public IEnumerable<Client> GetAll()
         {
             return clientRepository.GetAll();
         }
 
-        [HttpGet("{id}", Name = "GetItem")]
+        [HttpGet("{id}", Name = "GetClient")]
         public IActionResult Get(long id)
         {
             Client client = clientRepository.Get(id);
@@ -50,7 +50,7 @@ namespace ITechArtBooking.Controllers
             }
             else {
                 clientRepository.Create(client);
-                return CreatedAtRoute("GetItem", new { id = client.Id }, client);
+                return CreatedAtRoute("GetClient", new { id = client.Id }, client);
             }
         }
 
@@ -67,7 +67,7 @@ namespace ITechArtBooking.Controllers
             }
 
             clientRepository.Update(updatedClient);
-            return RedirectToRoute("GetAllItems");
+            return RedirectToRoute("GetAllClients");
         }
 
         [HttpDelete("{id}")]
