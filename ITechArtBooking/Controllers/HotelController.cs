@@ -43,30 +43,37 @@ namespace ITechArtBooking.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] Hotel hotel)
+        public IActionResult Create(string name, string description, int starNumber)
         {
-            if (hotel == null) {
-                return BadRequest();
-            }
-            else {
-                hotelRepository.Create(hotel);
-                return CreatedAtRoute("GetHotel", new { id = hotel.Id }, hotel);
-            }
+            Hotel hotel = new Hotel { 
+                Name = name,
+                Description = description,
+                StarNumber = starNumber
+            };
+
+            hotelRepository.Create(hotel);
+            return CreatedAtRoute("GetHotel", new { id = hotel.Id }, hotel);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(long id, [FromBody] Hotel updatedHotel)
+        public IActionResult Update(long id, string name, string description, int starNumber)
         {
-            if (updatedHotel == null || updatedHotel.Id != id) {
-                return BadRequest();
-            }
-
-            var hotel = hotelRepository.Get(id);
-            if (hotel == null) {
+            var oldHotel = hotelRepository.Get(id);
+            if (oldHotel == null) {
                 return NotFound();
             }
 
-            hotelRepository.Update(updatedHotel);
+            var newHotel = new Hotel {
+                Id = id,
+                Name = name,
+                Description = description,
+                StarNumber = starNumber,
+                Reviews = oldHotel.Reviews,
+                Categories = oldHotel.Categories
+            };
+
+
+            hotelRepository.Update(newHotel);
             return RedirectToRoute("GetAllHotels");
         }
 

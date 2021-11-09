@@ -12,7 +12,7 @@ namespace ITechArtBooking.Domain.Interfaces
         public IEnumerable<Hotel> GetAll();
         public Hotel Get(long id);
         void Create(Hotel hotel);
-        void Update(Hotel hotel);
+        void Update(Hotel newHotel);
         Hotel Delete(long id);
     }
 }

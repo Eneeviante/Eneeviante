@@ -33,13 +33,18 @@ namespace ITechArtBooking.Infrastucture.Repositories
             Context.SaveChanges();
         }
 
-        public void Update(Hotel updatedClient)
+        public void Update(Hotel newHotel)
         {
-            Hotel currentHotel = Get((int)updatedClient.Id);
+            Hotel currentHotel = Get(newHotel.Id);
 
-            currentHotel.Name = updatedClient.Name;
-            currentHotel.StarNumber = updatedClient.StarNumber;
-
+            currentHotel.Name = newHotel.Name;
+            currentHotel.Description = newHotel.Description;
+            currentHotel.StarNumber = newHotel.StarNumber;
+            if(newHotel.Categories != null)
+                currentHotel.Categories = new(newHotel.Categories);
+            if(newHotel.Reviews != null)
+                currentHotel.Reviews = new(newHotel.Reviews);
+            
             Context.Hotels.Update(currentHotel);
             Context.SaveChanges();
         }

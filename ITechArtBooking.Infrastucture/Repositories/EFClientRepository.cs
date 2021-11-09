@@ -33,14 +33,15 @@ namespace ITechArtBooking.Infrastucture.Repositories
             Context.SaveChanges();
         }
 
-        public void Update(Client updatedClient)
+        public void Update(long id, string firstName, string middleName,
+            string lastName, string phoneNumber)
         {
-            Client currentClient = Get((int)updatedClient.Id);
+            Client currentClient = Get(id);
 
-            currentClient.LastName = updatedClient.LastName;
-            currentClient.FirstName = updatedClient.FirstName;
-            currentClient.MiddleName = updatedClient.MiddleName;
-            currentClient.PhoneNumber = updatedClient.PhoneNumber;
+            currentClient.LastName = lastName;
+            currentClient.FirstName = firstName;
+            currentClient.MiddleName = middleName;
+            currentClient.PhoneNumber = phoneNumber;
 
             Context.Clients.Update(currentClient);
             Context.SaveChanges();

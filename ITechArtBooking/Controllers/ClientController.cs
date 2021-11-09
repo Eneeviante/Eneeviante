@@ -43,8 +43,17 @@ namespace ITechArtBooking.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] Client client)
+        public IActionResult Create(string firstName, string middleName,
+            string lastName, string phoneNumber)
         {
+            Client client = new Client { 
+                Id = 0,
+                FirstName = firstName,
+                MiddleName =middleName,
+                LastName = lastName,
+                PhoneNumber = phoneNumber
+            };
+
             if (client == null) {
                 return BadRequest();
             }
@@ -55,20 +64,31 @@ namespace ITechArtBooking.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(long id, [FromBody] Client updatedClient)
+        public IActionResult Update(long id, string firstName, string middleName,
+            string lastName, string phoneNumber)
         {
-            if (updatedClient == null || updatedClient.Id != id) {
-                return BadRequest();
-            }
-
             var client = clientRepository.Get(id);
             if (client == null) {
                 return NotFound();
             }
 
-            clientRepository.Update(updatedClient);
+            clientRepository.Update(id, firstName, middleName, lastName, phoneNumber);
             return RedirectToRoute("GetAllClients");
         }
+        //public IActionResult Update(long id, [FromBody] Client updatedClient)
+        //{
+        //    if (updatedClient == null || updatedClient.Id != id) {
+        //        return BadRequest();
+        //    }
+
+        //    var client = clientRepository.Get(id);
+        //    if (client == null) {
+        //        return NotFound();
+        //    }
+
+        //    clientRepository.Update(updatedClient);
+        //    return RedirectToRoute("GetAllClients");
+        //}
 
         [HttpDelete("{id}")]
         public IActionResult Delete(long id)

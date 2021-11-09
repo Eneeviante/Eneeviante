@@ -39,7 +39,7 @@ namespace ITechArtBooking
 
             services.AddTransient<IClientRepository, EFClientRepository>();          //defines a service that creates a new instance
             services.AddTransient<IHotelRepository, EFHotelRepository>();            //of the EFClientRepository class
-                                                                                     //every time an instance of the IClientRepository type is required
+            services.AddTransient<ICategoryRepository, EFCategoryRepository>();      //every time an instance of the IClientRepository type is required
 
         }
 
