@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ITechArtBooking.Infrastucture.Migrations
 {
     [DbContext(typeof(EFBookingDBContext))]
-    [Migration("20211109162727_Initial")]
+    [Migration("20211110051322_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -62,8 +62,6 @@ namespace ITechArtBooking.Infrastucture.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("HotelId");
 
                     b.ToTable("Categories");
                 });
@@ -125,7 +123,7 @@ namespace ITechArtBooking.Infrastucture.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long?>("ClientId")
+                    b.Property<long>("ClientId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("HotelId")
@@ -135,10 +133,6 @@ namespace ITechArtBooking.Infrastucture.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ClientId");
-
-                    b.HasIndex("HotelId");
 
                     b.ToTable("Reviews");
                 });
@@ -168,35 +162,11 @@ namespace ITechArtBooking.Infrastucture.Migrations
                     b.ToTable("Rooms");
                 });
 
-            modelBuilder.Entity("ITechArtBooking.Domain.Models.Category", b =>
-                {
-                    b.HasOne("ITechArtBooking.Domain.Models.Hotel", null)
-                        .WithMany("Categories")
-                        .HasForeignKey("HotelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ITechArtBooking.Domain.Models.Client", b =>
                 {
                     b.HasOne("ITechArtBooking.Domain.Models.Booking", null)
                         .WithMany("Clients")
                         .HasForeignKey("BookingId");
-                });
-
-            modelBuilder.Entity("ITechArtBooking.Domain.Models.Review", b =>
-                {
-                    b.HasOne("ITechArtBooking.Domain.Models.Client", "Client")
-                        .WithMany()
-                        .HasForeignKey("ClientId");
-
-                    b.HasOne("ITechArtBooking.Domain.Models.Hotel", null)
-                        .WithMany("Reviews")
-                        .HasForeignKey("HotelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Client");
                 });
 
             modelBuilder.Entity("ITechArtBooking.Domain.Models.Room", b =>
@@ -217,13 +187,6 @@ namespace ITechArtBooking.Infrastucture.Migrations
                     b.Navigation("Clients");
 
                     b.Navigation("Rooms");
-                });
-
-            modelBuilder.Entity("ITechArtBooking.Domain.Models.Hotel", b =>
-                {
-                    b.Navigation("Categories");
-
-                    b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618
         }

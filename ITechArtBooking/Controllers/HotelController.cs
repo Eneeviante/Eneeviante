@@ -67,9 +67,7 @@ namespace ITechArtBooking.Controllers
                 Id = id,
                 Name = name,
                 Description = description,
-                StarNumber = starNumber,
-                Reviews = oldHotel.Reviews,
-                Categories = oldHotel.Categories
+                StarNumber = starNumber
             };
 
 
@@ -85,6 +83,8 @@ namespace ITechArtBooking.Controllers
             if (deletedHotel == null) {
                 return BadRequest();
             }
+
+            
 
             return new ObjectResult(deletedHotel);
         }

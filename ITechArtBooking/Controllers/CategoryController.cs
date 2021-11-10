@@ -18,11 +18,9 @@ namespace ITechArtBooking.Controllers
         private readonly ICategoryRepository categoryRepository;
         private readonly IHotelRepository hotelRepository;
 
-        public CategoryController(ICategoryRepository _categoryRepository, 
-            IHotelRepository _hotelRepository)
+        public CategoryController(ICategoryRepository _categoryRepository)
         {
             categoryRepository = _categoryRepository;
-            hotelRepository = _hotelRepository;
         }
 
         [HttpGet(Name = "GetAllCategories")]
@@ -56,15 +54,11 @@ namespace ITechArtBooking.Controllers
                 Description = description
             };
 
-            Hotel hotel = hotelRepository.Get(hotelId);
-            if (hotel == null) {
+            if(hotelRepository.Get(hotelId) == null) {
                 return BadRequest();
             }
 
             categoryRepository.Create(category);
-            hotel.Categories.Add(category);
-            hotelRepository.Update(hotel);
-
             return CreatedAtRoute("GetCategory", new { id = category.Id }, category);
         }
 
@@ -81,20 +75,15 @@ namespace ITechArtBooking.Controllers
             };
 
             var oldCategory = categoryRepository.Get(id);
-            var oldHotel = hotelRepository.Get(oldCategory.HotelId);
-            var newHotel = hotelRepository.Get(hotelId);
-            if (oldCategory == null || newHotel == null) {
+            if (oldCategory == null) {
                 return NotFound();
             }
 
-            categoryRepository.Update(newCategory);
-            if(newCategory.HotelId != oldCategory.HotelId) {
-                oldHotel.Categories.Remove(oldCategory);
-                hotelRepository.Update(oldHotel);
-                newHotel.Categories.Add(newCategory);
-                hotelRepository.Update(newHotel);
+            if (hotelRepository.Get(hotelId) == null) {
+                return BadRequest();
             }
 
+            categoryRepository.Update(newCategory);
             return RedirectToRoute("GetAllCategories");
         }
 
@@ -106,14 +95,6 @@ namespace ITechArtBooking.Controllers
             if (deletedCategory == null) {
                 return BadRequest();
             }
-
-            var hotel = hotelRepository.Get(deletedCategory.HotelId);
-            if(hotel == null) {
-                return BadRequest();
-            }
-
-            hotel.Categories.Remove(deletedCategory);
-            hotelRepository.Update(hotel);
 
             return new ObjectResult(deletedCategory);
         }

@@ -11,7 +11,5 @@ namespace ITechArtBooking.Domain.Models
         public string Name { get; set; }
         public int StarNumber { get; set; }
         public string Description { get; set; }
-        public List<Review> Reviews { get; set; }
-        public List<Category> Categories { get; set; }
     }
 }

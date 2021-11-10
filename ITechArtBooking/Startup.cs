@@ -40,7 +40,7 @@ namespace ITechArtBooking
             services.AddTransient<IClientRepository, EFClientRepository>();          //defines a service that creates a new instance
             services.AddTransient<IHotelRepository, EFHotelRepository>();            //of the EFClientRepository class
             services.AddTransient<ICategoryRepository, EFCategoryRepository>();      //every time an instance of the IClientRepository type is required
-
+            services.AddTransient<IReviewRepository, EFReviewRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -40,10 +40,6 @@ namespace ITechArtBooking.Infrastucture.Repositories
             currentHotel.Name = newHotel.Name;
             currentHotel.Description = newHotel.Description;
             currentHotel.StarNumber = newHotel.StarNumber;
-            if(newHotel.Categories != null)
-                currentHotel.Categories = new(newHotel.Categories);
-            if(newHotel.Reviews != null)
-                currentHotel.Reviews = new(newHotel.Reviews);
             
             Context.Hotels.Update(currentHotel);
             Context.SaveChanges();
