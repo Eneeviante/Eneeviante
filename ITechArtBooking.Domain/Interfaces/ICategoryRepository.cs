@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ITechArtBooking.Domain.Models;
 
 namespace ITechArtBooking.Domain.Interfaces
@@ -6,9 +7,9 @@ namespace ITechArtBooking.Domain.Interfaces
     public interface ICategoryRepository
     {
         public IEnumerable<Category> GetAll();
-        public Category Get(long id);
+        public Category Get(Guid id);
         void Create(Category category);
         void Update(Category category);
-        Category Delete(long id);
+        Category Delete(Guid id);
     }
 }

@@ -27,20 +27,27 @@ namespace ITechArtBooking
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {
+        {//=)
             services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
+            services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ITechArtBooking", Version = "v1" });
             });
             string connection = Configuration.GetConnectionString("DefaultConnection");
             //gets the options object that configures the database for the context class
-            services.AddDbContext<EFBookingDBContext>(options => options.UseSqlServer(connection));
+            services.AddDbContext<EFBookingDBContext>(options => {
+                options.UseSqlServer(connection
+                    //sqlServerOptionsAction: sqlOptions => {
+                    //    sqlOptions.EnableRetryOnFailure();
+                    //}
+                    );
+            });
 
             services.AddTransient<IClientRepository, EFClientRepository>();          //defines a service that creates a new instance
             services.AddTransient<IHotelRepository, EFHotelRepository>();            //of the EFClientRepository class
             services.AddTransient<ICategoryRepository, EFCategoryRepository>();      //every time an instance of the IClientRepository type is required
             services.AddTransient<IReviewRepository, EFReviewRepository>();
+            services.AddTransient<IRoomRepository, EFRoomRepository>();
+            services.AddTransient<IBookingRepository, EFBookingRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

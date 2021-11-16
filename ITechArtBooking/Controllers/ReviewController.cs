@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-//using ITechArtBooking.Domain.Services;
 using ITechArtBooking.Domain.Models;
 //using ITechArtBooking.Infrastucture.Repositories.Fakes;
 using ITechArtBooking.Domain.Interfaces;
@@ -34,7 +33,7 @@ namespace ITechArtBooking.Controllers
         }
 
         [HttpGet("{id}", Name = "GetReview")]
-        public IActionResult Get(long id)
+        public IActionResult Get(Guid id)
         {
             Review review = reviewRepository.Get(id);
 
@@ -47,48 +46,54 @@ namespace ITechArtBooking.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(long hotelId, int clientId, string text)
+        public IActionResult Create(Guid hotelId, Guid clientId, string text)
         {
-            Review review = new Review {
-                Id = 0,
-                HotelId = hotelId,
-                ClientId = clientId,
-                Text = text
-            };
+            var client = clientRepository.Get(clientId);
+            var hotel = hotelRepository.Get(hotelId);
 
-            if(clientRepository.Get(clientId) == null || hotelRepository.Get(hotelId) == null) {
+            if (client == null || hotel == null) {
                 return BadRequest();
             }
+
+            Review review = new Review {
+                Id = new Guid(),
+                Hotel = hotel,
+                Client = client,
+                Text = text
+            };
 
             reviewRepository.Create(review);
             return CreatedAtRoute("GetReview", new { id = review.Id }, review);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(long id, long hotelId, int clientId, string text)
+        public IActionResult Update(Guid id, Guid hotelId, Guid clientId, string text)
         {
-            Review newReview = new Review {
-                Id = id,
-                HotelId = hotelId,
-                ClientId = clientId,
-                Text = text
-            };
-
             var oldReview = reviewRepository.Get(id);
             if (oldReview == null) {
                 return NotFound();
             }
 
-            if (clientRepository.Get(clientId) == null || hotelRepository.Get(hotelId) == null) {
+            var newClient = clientRepository.Get(clientId);
+            var newHotel = hotelRepository.Get(hotelId);
+
+            if (newClient == null || newHotel == null) {
                 return BadRequest();
             }
+
+            Review newReview = new Review {
+                Id = id,
+                Hotel = newHotel,
+                Client = newClient,
+                Text = text
+            };
 
             reviewRepository.Update(newReview);
             return RedirectToRoute("GetAllReviews");
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(long id)
+        public IActionResult Delete(Guid id)
         {
             var deletedReview = reviewRepository.Delete(id);
 

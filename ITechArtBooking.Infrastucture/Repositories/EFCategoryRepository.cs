@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ITechArtBooking.Domain.Interfaces;
 using ITechArtBooking.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ITechArtBooking.Infrastucture.Repositories
 {
@@ -19,12 +20,16 @@ namespace ITechArtBooking.Infrastucture.Repositories
 
         public IEnumerable<Category> GetAll()
         {
-            return Context.Categories;
+            return Context.Categories
+                .Include(c => c.Hotel)
+                .ToList();
         }
 
-        public Category Get(long id)
+        public Category Get(Guid id)
         {
-            return Context.Categories.Find(id);
+            return Context.Categories
+                .Include(c => c.Hotel)
+                .FirstOrDefault(c => c.Id == id);
         }
 
         public void Create(Category category)
@@ -37,7 +42,7 @@ namespace ITechArtBooking.Infrastucture.Repositories
         {
             Category currentCategory = Get(category.Id);
 
-            currentCategory.HotelId = category.HotelId;
+            currentCategory.Hotel = category.Hotel;
             currentCategory.BedsNumber = category.BedsNumber;
             currentCategory.Description = category.Description;
             currentCategory.CostPerDay = category.CostPerDay;
@@ -46,7 +51,7 @@ namespace ITechArtBooking.Infrastucture.Repositories
             Context.SaveChanges();
         }
 
-        public Category Delete(long id)
+        public Category Delete(Guid id)
         {
             Category category = Get(id);
 

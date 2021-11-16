@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,11 +9,15 @@ namespace ITechArtBooking.Domain.Models
 {
     public class Booking
     {
-        public long Id { get; set; }
+        public Guid Id { get; set; }
+
+        //[DataType(DataType.Time)]
         public DateTime DateFrom { get; set; }
+
+        //[DataType(DataType.Time)]
         public DateTime DateTo { get; set; }
-        public List<Room> Rooms { get; set; }
-        public List<Client> Clients { get; set; }
+        public Room Room { get; set; }
+        public Client Client { get; set; }
         public float Sum { get; set; }
     }
 }

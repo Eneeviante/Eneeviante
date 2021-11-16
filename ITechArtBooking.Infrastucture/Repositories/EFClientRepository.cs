@@ -22,7 +22,7 @@ namespace ITechArtBooking.Infrastucture.Repositories
             return Context.Clients;
         }
 
-        public Client Get(long id)
+        public Client Get(Guid id)
         {
             return Context.Clients.Find(id);
         }
@@ -33,21 +33,20 @@ namespace ITechArtBooking.Infrastucture.Repositories
             Context.SaveChanges();
         }
 
-        public void Update(long id, string firstName, string middleName,
-            string lastName, string phoneNumber)
+        public void Update(Client newClient)
         {
-            Client currentClient = Get(id);
+            Client currentClient = Get(newClient.Id);
 
-            currentClient.LastName = lastName;
-            currentClient.FirstName = firstName;
-            currentClient.MiddleName = middleName;
-            currentClient.PhoneNumber = phoneNumber;
+            currentClient.LastName = newClient.LastName;
+            currentClient.FirstName = newClient.FirstName;
+            currentClient.MiddleName = newClient.MiddleName;
+            currentClient.PhoneNumber = newClient.PhoneNumber;
 
             Context.Clients.Update(currentClient);
             Context.SaveChanges();
         }
 
-        public Client Delete(long id)
+        public Client Delete(Guid id)
         {
             Client client = Get(id);
 

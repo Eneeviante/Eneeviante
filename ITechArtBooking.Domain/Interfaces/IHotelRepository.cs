@@ -10,9 +10,9 @@ namespace ITechArtBooking.Domain.Interfaces
     public interface IHotelRepository
     {
         public IEnumerable<Hotel> GetAll();
-        public Hotel Get(long id);
+        public Hotel Get(Guid id);
         void Create(Hotel hotel);
         void Update(Hotel newHotel);
-        Hotel Delete(long id);
+        Hotel Delete(Guid id);
     }
 }

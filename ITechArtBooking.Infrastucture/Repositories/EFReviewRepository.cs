@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ITechArtBooking.Domain.Interfaces;
 using ITechArtBooking.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ITechArtBooking.Infrastucture.Repositories
 {
@@ -19,12 +20,17 @@ namespace ITechArtBooking.Infrastucture.Repositories
 
         public IEnumerable<Review> GetAll()
         {
-            return Context.Reviews;
+            return Context.Reviews
+                .Include(r => r.Client)
+                .Include(r => r.Hotel).ToList();
         }
 
-        public Review Get(long id)
+        public Review Get(Guid id)
         {
-            return Context.Reviews.Find(id);
+            return Context.Reviews
+                .Include(r=>r.Hotel)
+                .Include(r=>r.Client)
+                .FirstOrDefault(r => r.Id == id);
         }
 
         public void Create(Review review)
@@ -37,15 +43,15 @@ namespace ITechArtBooking.Infrastucture.Repositories
         {
             Review currentReview = Get(review.Id);
 
-            currentReview.ClientId = review.ClientId;
-            currentReview.HotelId = review.HotelId;
+            currentReview.Client = review.Client;
+            currentReview.Hotel = review.Hotel;
             currentReview.Text = review.Text;
 
             Context.Reviews.Update(currentReview);
             Context.SaveChanges();
         }
 
-        public Review Delete(long id)
+        public Review Delete(Guid id)
         {
             Review review = Get(id);
 

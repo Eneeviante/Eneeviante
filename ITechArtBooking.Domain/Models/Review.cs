@@ -8,9 +8,9 @@ namespace ITechArtBooking.Domain.Models
 {
     public class Review
     {
-        public long Id { get; set; }
-        public long HotelId { get; set; }
-        public long ClientId { get; set; }
+        public Guid Id { get; set; }
+        public Hotel Hotel { get; set; }
+        public Client Client { get; set; }
         public string Text { get; set; }
     }
 }

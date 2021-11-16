@@ -8,7 +8,7 @@ namespace ITechArtBooking.Domain.Models
 {
     public class Room
     {
-        public long Id { get; set; }
+        public Guid Id { get; set; }
         public Category Category { get; set; }
         public string Picture { get; set; }
     }

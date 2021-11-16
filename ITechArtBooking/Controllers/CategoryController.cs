@@ -18,9 +18,11 @@ namespace ITechArtBooking.Controllers
         private readonly ICategoryRepository categoryRepository;
         private readonly IHotelRepository hotelRepository;
 
-        public CategoryController(ICategoryRepository _categoryRepository)
+        public CategoryController(ICategoryRepository _categoryRepository,
+            IHotelRepository _hotelRepository)
         {
             categoryRepository = _categoryRepository;
+            hotelRepository = _hotelRepository;
         }
 
         [HttpGet(Name = "GetAllCategories")]
@@ -30,7 +32,7 @@ namespace ITechArtBooking.Controllers
         }
 
         [HttpGet("{id}", Name = "GetCategory")]
-        public IActionResult Get(long id)
+        public IActionResult Get(Guid id)
         {
             Category category = categoryRepository.Get(id);
 
@@ -43,52 +45,54 @@ namespace ITechArtBooking.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(long hotelId, int bedsNumber,
+        public IActionResult Create(Guid hotelId, int bedsNumber,
             string description, float costPerDay)
         {
-            Category category = new Category {
-                Id = 0,
-                HotelId = hotelId,
+            var hotel = hotelRepository.Get(hotelId);
+            if (hotel == null) {
+                return BadRequest();
+            }
+
+            Category newCategory = new Category {
+                Id = new Guid(),
+                Hotel = hotel,
                 BedsNumber = bedsNumber,
                 CostPerDay = costPerDay,
                 Description = description
             };
 
-            if(hotelRepository.Get(hotelId) == null) {
-                return BadRequest();
-            }
-
-            categoryRepository.Create(category);
-            return CreatedAtRoute("GetCategory", new { id = category.Id }, category);
+            categoryRepository.Create(newCategory);
+            return CreatedAtRoute("GetCategory", new { id = newCategory.Id }, newCategory);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(long id, long hotelId, int bedsNumber,
+        public IActionResult Update(Guid id, Guid hotelId, int bedsNumber,
             string description, float costPerDay)
         {
-            Category newCategory = new Category {
-                Id = id,
-                HotelId = hotelId,
-                BedsNumber = bedsNumber,
-                Description = description,
-                CostPerDay = costPerDay
-            };
+            var newHotel = hotelRepository.Get(hotelId);
+            if (newHotel == null) {
+                return BadRequest();
+            }
 
             var oldCategory = categoryRepository.Get(id);
             if (oldCategory == null) {
                 return NotFound();
             }
 
-            if (hotelRepository.Get(hotelId) == null) {
-                return BadRequest();
-            }
+            Category newCategory = new Category {
+                Id = id,
+                Hotel = newHotel,
+                BedsNumber = bedsNumber,
+                Description = description,
+                CostPerDay = costPerDay
+            };
 
             categoryRepository.Update(newCategory);
             return RedirectToRoute("GetAllCategories");
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(long id)
+        public IActionResult Delete(Guid id)
         {
             var deletedCategory = categoryRepository.Delete(id);
 

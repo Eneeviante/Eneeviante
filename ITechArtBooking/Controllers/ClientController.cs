@@ -30,7 +30,7 @@ namespace ITechArtBooking.Controllers
         }
 
         [HttpGet("{id}", Name = "GetClient")]
-        public IActionResult Get(long id)
+        public IActionResult Get(Guid id)
         {
             Client client = clientRepository.Get(id);
 
@@ -47,7 +47,7 @@ namespace ITechArtBooking.Controllers
             string lastName, string phoneNumber)
         {
             Client client = new Client { 
-                Id = 0,
+                Id = new Guid(),
                 FirstName = firstName,
                 MiddleName =middleName,
                 LastName = lastName,
@@ -64,7 +64,7 @@ namespace ITechArtBooking.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(long id, string firstName, string middleName,
+        public IActionResult Update(Guid id, string firstName, string middleName,
             string lastName, string phoneNumber)
         {
             var client = clientRepository.Get(id);
@@ -72,10 +72,18 @@ namespace ITechArtBooking.Controllers
                 return NotFound();
             }
 
-            clientRepository.Update(id, firstName, middleName, lastName, phoneNumber);
+            var newClient = new Client {
+                Id = id,
+                FirstName = firstName,
+                MiddleName = middleName,
+                LastName = lastName,
+                PhoneNumber = phoneNumber
+            };
+
+            clientRepository.Update(newClient);
             return RedirectToRoute("GetAllClients");
         }
-        //public IActionResult Update(long id, [FromBody] Client updatedClient)
+        //public IActionResult Update(Guid id, [FromBody] Client updatedClient)
         //{
         //    if (updatedClient == null || updatedClient.Id != id) {
         //        return BadRequest();
@@ -91,7 +99,7 @@ namespace ITechArtBooking.Controllers
         //}
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(long id)
+        public IActionResult Delete(Guid id)
         {
             var deletedClient = clientRepository.Delete(id);
 

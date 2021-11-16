@@ -30,7 +30,7 @@ namespace ITechArtBooking.Controllers
         }
 
         [HttpGet("{id}", Name = "GetHotel")]
-        public IActionResult Get(long id)
+        public IActionResult Get(Guid id)
         {
             Hotel hotel = hotelRepository.Get(id);
 
@@ -46,6 +46,7 @@ namespace ITechArtBooking.Controllers
         public IActionResult Create(string name, string description, int starNumber)
         {
             Hotel hotel = new Hotel { 
+                Id = new Guid(),
                 Name = name,
                 Description = description,
                 StarNumber = starNumber
@@ -56,7 +57,7 @@ namespace ITechArtBooking.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(long id, string name, string description, int starNumber)
+        public IActionResult Update(Guid id, string name, string description, int starNumber)
         {
             var oldHotel = hotelRepository.Get(id);
             if (oldHotel == null) {
@@ -76,15 +77,13 @@ namespace ITechArtBooking.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(long id)
+        public IActionResult Delete(Guid id)
         {
             var deletedHotel = hotelRepository.Delete(id);
 
             if (deletedHotel == null) {
                 return BadRequest();
             }
-
-            
 
             return new ObjectResult(deletedHotel);
         }

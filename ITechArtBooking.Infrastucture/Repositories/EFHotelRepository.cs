@@ -22,7 +22,7 @@ namespace ITechArtBooking.Infrastucture.Repositories
             return Context.Hotels;
         }
 
-        public Hotel Get(long id)
+        public Hotel Get(Guid id)
         {
             return Context.Hotels.Find(id);
         }
@@ -45,7 +45,7 @@ namespace ITechArtBooking.Infrastucture.Repositories
             Context.SaveChanges();
         }
 
-        public Hotel Delete(long id)
+        public Hotel Delete(Guid id)
         {
             Hotel hotel = Get(id);
 
