@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ITechArtBooking.Infrastucture.Repositories
 {
-    public class EFCategoryRepository : ICategoryRepository
+    public class EFCategoryRepository : IRepository<Category>
     {
         private readonly EFBookingDBContext Context;
 

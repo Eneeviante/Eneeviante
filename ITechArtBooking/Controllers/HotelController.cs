@@ -16,9 +16,9 @@ namespace ITechArtBooking.Controllers
     public class HotelController : ControllerBase
     {
         //private readonly ClientService postsService = new(new ClientsFakeRepository());
-        private readonly IHotelRepository hotelRepository;
+        private readonly IRepository<Hotel> hotelRepository;
 
-        public HotelController(IHotelRepository _hotelRepository)
+        public HotelController(IRepository<Hotel> _hotelRepository)
         {
             hotelRepository = _hotelRepository;
         }

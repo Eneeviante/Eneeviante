@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ITechArtBooking.Infrastucture.Repositories
 {
-    public class EFRoomRepository : IRoomRepository
+    public class EFRoomRepository : IRepository<Room>
     {
         private readonly EFBookingDBContext Context;
 

@@ -14,12 +14,12 @@ namespace ITechArtBooking.Controllers
     public class ReviewController : ControllerBase
     {
         //private readonly ClientService postsService = new(new ClientsFakeRepository());
-        private readonly IReviewRepository reviewRepository;
-        private readonly IHotelRepository hotelRepository;
-        private readonly IClientRepository clientRepository;
+        private readonly IRepository<Review> reviewRepository;
+        private readonly IRepository<Hotel> hotelRepository;
+        private readonly IRepository<Client> clientRepository;
 
-        public ReviewController(IReviewRepository _reviewRepository,
-            IHotelRepository _hotelRepository, IClientRepository _clientRepository)
+        public ReviewController(IRepository<Review> _reviewRepository,
+            IRepository<Hotel> _hotelRepository, IRepository<Client> _clientRepository)
         {
             reviewRepository = _reviewRepository;
             hotelRepository = _hotelRepository;

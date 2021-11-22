@@ -8,7 +8,7 @@ using ITechArtBooking.Domain.Models;
 
 namespace ITechArtBooking.Infrastucture.Repositories
 {
-    public class EFClientRepository : IClientRepository
+    public class EFClientRepository : IRepository<Client>
     {
         private readonly EFBookingDBContext Context;
 

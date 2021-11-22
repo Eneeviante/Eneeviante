@@ -15,11 +15,11 @@ namespace ITechArtBooking.Controllers
     public class RoomController : ControllerBase
     {
         //private readonly ClientService postsService = new(new ClientsFakeRepository());
-        private readonly IRoomRepository roomRepository;
-        private readonly ICategoryRepository categoryRepository;
+        private readonly IRepository<Room> roomRepository;
+        private readonly IRepository<Category> categoryRepository;
 
-        public RoomController(IRoomRepository _roomRepository,
-            ICategoryRepository _categoryRepository)
+        public RoomController(IRepository<Room> _roomRepository,
+            IRepository<Category> _categoryRepository)
         {
             categoryRepository = _categoryRepository;
             roomRepository = _roomRepository;

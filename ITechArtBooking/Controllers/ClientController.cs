@@ -16,9 +16,9 @@ namespace ITechArtBooking.Controllers
     public class ClientController : ControllerBase
     {
         //private readonly ClientService postsService = new(new ClientsFakeRepository());
-        private readonly IClientRepository clientRepository;
+        private readonly IRepository<Client> clientRepository;
 
-        public ClientController(IClientRepository _clientRepository)
+        public ClientController(IRepository<Client> _clientRepository)
         {
             clientRepository = _clientRepository;
         }
@@ -83,20 +83,6 @@ namespace ITechArtBooking.Controllers
             clientRepository.Update(newClient);
             return RedirectToRoute("GetAllClients");
         }
-        //public IActionResult Update(Guid id, [FromBody] Client updatedClient)
-        //{
-        //    if (updatedClient == null || updatedClient.Id != id) {
-        //        return BadRequest();
-        //    }
-
-        //    var client = clientRepository.Get(id);
-        //    if (client == null) {
-        //        return NotFound();
-        //    }
-
-        //    clientRepository.Update(updatedClient);
-        //    return RedirectToRoute("GetAllClients");
-        //}
 
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)

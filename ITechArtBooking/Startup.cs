@@ -1,4 +1,5 @@
 using ITechArtBooking.Domain.Interfaces;
+using ITechArtBooking.Domain.Models;
 using ITechArtBooking.Infrastucture.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -42,12 +43,12 @@ namespace ITechArtBooking
                     );
             });
 
-            services.AddTransient<IClientRepository, EFClientRepository>();          //defines a service that creates a new instance
-            services.AddTransient<IHotelRepository, EFHotelRepository>();            //of the EFClientRepository class
-            services.AddTransient<ICategoryRepository, EFCategoryRepository>();      //every time an instance of the IClientRepository type is required
-            services.AddTransient<IReviewRepository, EFReviewRepository>();
-            services.AddTransient<IRoomRepository, EFRoomRepository>();
-            services.AddTransient<IBookingRepository, EFBookingRepository>();
+            services.AddTransient<IRepository<Client>, EFClientRepository>();          //defines a service that creates a new instance
+            services.AddTransient<IRepository<Hotel>, EFHotelRepository>();            //of the EFClientRepository class
+            services.AddTransient<IRepository<Category>, EFCategoryRepository>();      //every time an instance of the IClientRepository type is required
+            services.AddTransient<IRepository<Review>, EFReviewRepository>();
+            services.AddTransient<IRepository<Room>, EFRoomRepository>();
+            services.AddTransient<IRepository<Booking>, EFBookingRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -14,12 +14,12 @@ namespace ITechArtBooking.Controllers
     [ApiController]
     public class BookingController : ControllerBase
     {
-        private readonly IBookingRepository bookingRepository;
-        private readonly IClientRepository clientRepository;
-        private readonly IRoomRepository roomRepository;
+        private readonly IRepository<Booking> bookingRepository;
+        private readonly IRepository<Client> clientRepository;
+        private readonly IRepository<Room> roomRepository;
 
-        public BookingController(IBookingRepository _bookingRepository,
-            IClientRepository _clientRepository, IRoomRepository _roomRepository)
+        public BookingController(IRepository<Booking> _bookingRepository,
+            IRepository<Client> _clientRepository, IRepository<Room> _roomRepository)
         {
             bookingRepository = _bookingRepository;
             clientRepository = _clientRepository;
