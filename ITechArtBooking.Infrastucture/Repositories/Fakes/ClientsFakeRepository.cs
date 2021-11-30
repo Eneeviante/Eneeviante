@@ -8,13 +8,13 @@ using ITechArtBooking.Domain.Models;
 
 namespace ITechArtBooking.Infrastucture.Repositories.Fakes
 {
-    /*public class ClientsFakeRepository : IClientRepository
+    /*public class UsersFakeRepository : IUserRepository
     {
-        public List<Client> GetAll()
+        public List<User> GetAll()
         {
-            return new List<Client>()
+            return new List<User>()
             {
-                new Client
+                new User
                 {
                     Id = 1,
                     FirstName = "adawdaw",

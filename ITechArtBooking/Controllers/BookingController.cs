@@ -15,14 +15,14 @@ namespace ITechArtBooking.Controllers
     public class BookingController : ControllerBase
     {
         private readonly IRepository<Booking> bookingRepository;
-        private readonly IRepository<Client> clientRepository;
+        private readonly IRepository<User> userRepository;
         private readonly IRepository<Room> roomRepository;
 
         public BookingController(IRepository<Booking> _bookingRepository,
-            IRepository<Client> _clientRepository, IRepository<Room> _roomRepository)
+            IRepository<User> _userRepository, IRepository<Room> _roomRepository)
         {
             bookingRepository = _bookingRepository;
-            clientRepository = _clientRepository;
+            userRepository = _userRepository;
             roomRepository = _roomRepository;
         }
 
@@ -47,10 +47,10 @@ namespace ITechArtBooking.Controllers
 
         [HttpPost]
         public IActionResult Create(string dateFrom, string dateTo,
-            Guid clientId, Guid roomId)
+            Guid userId, Guid roomId)
         {
-            var client = clientRepository.Get(clientId);
-            if (client == null) {
+            var user = userRepository.Get(userId);
+            if (user == null) {
                 return BadRequest();
             }
             var room = roomRepository.Get(roomId);
@@ -69,7 +69,7 @@ namespace ITechArtBooking.Controllers
                     Id = new Guid(),
                     DateFrom = dFrom,
                     DateTo = dTo,
-                    Client = client,
+                    User = user,
                     Room = room,
                     Sum = sum
                 };
@@ -84,10 +84,10 @@ namespace ITechArtBooking.Controllers
 
         [HttpPut("{id}")]
         public IActionResult Update(Guid id, string dateFrom, string dateTo,
-            Guid clientId, Guid roomId)
+            Guid userId, Guid roomId)
         {
-            var newClient = clientRepository.Get(clientId);
-            if (newClient == null) {
+            var newUser = userRepository.Get(userId);
+            if (newUser == null) {
                 return BadRequest();
             }
 
@@ -105,7 +105,7 @@ namespace ITechArtBooking.Controllers
                 Id = id,
                 DateFrom = DateTime.Parse(dateFrom),
                 DateTo = DateTime.Parse(dateTo),
-                Client = newClient,
+                User = newUser,
                 Room = newRoom
             };
 

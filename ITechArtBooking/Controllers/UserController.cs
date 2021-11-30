@@ -13,32 +13,32 @@ namespace ITechArtBooking.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ClientController : ControllerBase
+    public class UserController : ControllerBase
     {
-        //private readonly ClientService postsService = new(new ClientsFakeRepository());
-        private readonly IRepository<Client> clientRepository;
+        //private readonly UserService postsService = new(new UsersFakeRepository());
+        private readonly IRepository<User> userRepository;
 
-        public ClientController(IRepository<Client> _clientRepository)
+        public UserController(IRepository<User> _userRepository)
         {
-            clientRepository = _clientRepository;
+            userRepository = _userRepository;
         }
 
-        [HttpGet(Name = "GetAllClients")]
-        public IEnumerable<Client> GetAll()
+        [HttpGet(Name = "GetAllUsers")]
+        public IEnumerable<User> GetAll()
         {
-            return clientRepository.GetAll();
+            return userRepository.GetAll();
         }
 
-        [HttpGet("{id}", Name = "GetClient")]
+        [HttpGet("{id}", Name = "GetUser")]
         public IActionResult Get(Guid id)
         {
-            Client client = clientRepository.Get(id);
+            User user = userRepository.Get(id);
 
-            if(client == null) {
+            if(user == null) {
                 return NotFound();
             }
             else {
-                return new ObjectResult(client);
+                return new ObjectResult(user);
             }
         }
 
@@ -46,7 +46,7 @@ namespace ITechArtBooking.Controllers
         public IActionResult Create(string firstName, string middleName,
             string lastName, string phoneNumber)
         {
-            Client client = new Client { 
+            User user = new User { 
                 Id = new Guid(),
                 FirstName = firstName,
                 MiddleName =middleName,
@@ -54,12 +54,12 @@ namespace ITechArtBooking.Controllers
                 PhoneNumber = phoneNumber
             };
 
-            if (client == null) {
+            if (user == null) {
                 return BadRequest();
             }
             else {
-                clientRepository.Create(client);
-                return CreatedAtRoute("GetClient", new { id = client.Id }, client);
+                userRepository.Create(user);
+                return CreatedAtRoute("GetUser", new { id = user.Id }, user);
             }
         }
 
@@ -67,12 +67,12 @@ namespace ITechArtBooking.Controllers
         public IActionResult Update(Guid id, string firstName, string middleName,
             string lastName, string phoneNumber)
         {
-            var client = clientRepository.Get(id);
-            if (client == null) {
+            var user = userRepository.Get(id);
+            if (user == null) {
                 return NotFound();
             }
 
-            var newClient = new Client {
+            var newUser = new User {
                 Id = id,
                 FirstName = firstName,
                 MiddleName = middleName,
@@ -80,20 +80,20 @@ namespace ITechArtBooking.Controllers
                 PhoneNumber = phoneNumber
             };
 
-            clientRepository.Update(newClient);
-            return RedirectToRoute("GetAllClients");
+            userRepository.Update(newUser);
+            return RedirectToRoute("GetAllUsers");
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            var deletedClient = clientRepository.Delete(id);
+            var deletedUser = userRepository.Delete(id);
 
-            if (deletedClient == null) {
+            if (deletedUser == null) {
                 return BadRequest();
             }
 
-            return new ObjectResult(deletedClient);
+            return new ObjectResult(deletedUser);
         }
     }
 }

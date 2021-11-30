@@ -21,7 +21,7 @@ namespace ITechArtBooking.Infrastucture.Repositories
         public IEnumerable<Booking> GetAll()
         {
             return Context.Bookings
-                .Include(b => b.Client)
+                .Include(b => b.User)
                 .Include(b => b.Room)
                 .ThenInclude(r => r.Category)
                 .ThenInclude(c => c.Hotel)
@@ -33,7 +33,7 @@ namespace ITechArtBooking.Infrastucture.Repositories
             return Context.Bookings
                 .Include(b => b.Room)
                 .ThenInclude(r => r.Category)
-                .Include(b => b.Client)
+                .Include(b => b.User)
                 .FirstOrDefault(b => b.Id == id);
         }
 
@@ -50,7 +50,7 @@ namespace ITechArtBooking.Infrastucture.Repositories
             currentBooking.DateFrom = booking.DateFrom;
             currentBooking.DateTo = booking.DateTo;
             currentBooking.Room = booking.Room;
-            currentBooking.Client = booking.Client;
+            currentBooking.User = booking.User;
 
             Context.Bookings.Update(currentBooking);
             Context.SaveChanges();

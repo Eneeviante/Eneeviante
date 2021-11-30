@@ -21,7 +21,7 @@ namespace ITechArtBooking.Infrastucture.Repositories
         public IEnumerable<Review> GetAll()
         {
             return Context.Reviews
-                .Include(r => r.Client)
+                .Include(r => r.User)
                 .Include(r => r.Hotel).ToList();
         }
 
@@ -29,7 +29,7 @@ namespace ITechArtBooking.Infrastucture.Repositories
         {
             return Context.Reviews
                 .Include(r=>r.Hotel)
-                .Include(r=>r.Client)
+                .Include(r=>r.User)
                 .FirstOrDefault(r => r.Id == id);
         }
 
@@ -43,7 +43,7 @@ namespace ITechArtBooking.Infrastucture.Repositories
         {
             Review currentReview = Get(review.Id);
 
-            currentReview.Client = review.Client;
+            currentReview.User = review.User;
             currentReview.Hotel = review.Hotel;
             currentReview.Text = review.Text;
 

@@ -43,9 +43,9 @@ namespace ITechArtBooking
                     );
             });
 
-            services.AddTransient<IRepository<Client>, EFClientRepository>();          //defines a service that creates a new instance
-            services.AddTransient<IRepository<Hotel>, EFHotelRepository>();            //of the EFClientRepository class
-            services.AddTransient<IRepository<Category>, EFCategoryRepository>();      //every time an instance of the IClientRepository type is required
+            services.AddTransient<IRepository<User>, EFUserRepository>();          //defines a service that creates a new instance
+            services.AddTransient<IRepository<Hotel>, EFHotelRepository>();            //of the EFUserRepository class
+            services.AddTransient<IRepository<Category>, EFCategoryRepository>();      //every time an instance of the IUserRepository type is required
             services.AddTransient<IRepository<Review>, EFReviewRepository>();
             services.AddTransient<IRepository<Room>, EFRoomRepository>();
             services.AddTransient<IRepository<Booking>, EFBookingRepository>();

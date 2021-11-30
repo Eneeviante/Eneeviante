@@ -15,7 +15,7 @@ namespace ITechArtBooking.Controllers
     [ApiController]
     public class HotelController : ControllerBase
     {
-        //private readonly ClientService postsService = new(new ClientsFakeRepository());
+        //private readonly UserService postsService = new(new UsersFakeRepository());
         private readonly IRepository<Hotel> hotelRepository;
 
         public HotelController(IRepository<Hotel> _hotelRepository)
@@ -41,6 +41,19 @@ namespace ITechArtBooking.Controllers
                 return new ObjectResult(hotel);
             }
         }
+
+        //[HttpGet("{id}", Name = "GetHotel_AvailableRooms")]
+        //public IActionResult Get(Guid id)
+        //{
+        //    Hotel hotel = hotelRepository.Get(id);
+
+        //    if (hotel == null) {
+        //        return NotFound();
+        //    }
+        //    else {
+        //        return new ObjectResult(hotel);
+        //    }
+        //}
 
         [HttpPost]
         public IActionResult Create(string name, string description, int starNumber)
