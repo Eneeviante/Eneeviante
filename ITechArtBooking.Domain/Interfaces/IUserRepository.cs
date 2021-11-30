@@ -6,12 +6,8 @@ using System.Threading.Tasks;
 
 namespace ITechArtBooking.Domain.Interfaces
 {
-    public interface IRepository<T>
+    interface IUserRepository
     {
-        IEnumerable<T> GetAll();
-        T Get(Guid id);
-        void Create(T room);
-        void Update(T room);
-        T Delete(Guid id);
+
     }
 }
