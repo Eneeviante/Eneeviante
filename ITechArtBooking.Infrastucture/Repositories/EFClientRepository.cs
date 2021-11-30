@@ -8,7 +8,7 @@ using ITechArtBooking.Domain.Models;
 
 namespace ITechArtBooking.Infrastucture.Repositories
 {
-    public class EFClientRepository : IClientRepository
+    public class EFClientRepository : IRepository<Client>
     {
         private readonly EFBookingDBContext Context;
 
@@ -22,7 +22,7 @@ namespace ITechArtBooking.Infrastucture.Repositories
             return Context.Clients;
         }
 
-        public Client Get(long id)
+        public Client Get(Guid id)
         {
             return Context.Clients.Find(id);
         }
@@ -33,20 +33,20 @@ namespace ITechArtBooking.Infrastucture.Repositories
             Context.SaveChanges();
         }
 
-        public void Update(Client updatedClient)
+        public void Update(Client newClient)
         {
-            Client currentClient = Get((int)updatedClient.Id);
+            Client currentClient = Get(newClient.Id);
 
-            currentClient.LastName = updatedClient.LastName;
-            currentClient.FirstName = updatedClient.FirstName;
-            currentClient.MiddleName = updatedClient.MiddleName;
-            currentClient.PhoneNumber = updatedClient.PhoneNumber;
+            currentClient.LastName = newClient.LastName;
+            currentClient.FirstName = newClient.FirstName;
+            currentClient.MiddleName = newClient.MiddleName;
+            currentClient.PhoneNumber = newClient.PhoneNumber;
 
             Context.Clients.Update(currentClient);
             Context.SaveChanges();
         }
 
-        public Client Delete(long id)
+        public Client Delete(Guid id)
         {
             Client client = Get(id);
 

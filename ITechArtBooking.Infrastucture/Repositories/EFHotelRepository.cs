@@ -8,7 +8,7 @@ using ITechArtBooking.Domain.Models;
 
 namespace ITechArtBooking.Infrastucture.Repositories
 {
-    public class EFHotelRepository : IHotelRepository
+    public class EFHotelRepository : IRepository<Hotel>
     {
         private readonly EFBookingDBContext Context;
 
@@ -22,7 +22,7 @@ namespace ITechArtBooking.Infrastucture.Repositories
             return Context.Hotels;
         }
 
-        public Hotel Get(long id)
+        public Hotel Get(Guid id)
         {
             return Context.Hotels.Find(id);
         }
@@ -33,18 +33,19 @@ namespace ITechArtBooking.Infrastucture.Repositories
             Context.SaveChanges();
         }
 
-        public void Update(Hotel updatedClient)
+        public void Update(Hotel newHotel)
         {
-            Hotel currentHotel = Get((int)updatedClient.Id);
+            Hotel currentHotel = Get(newHotel.Id);
 
-            currentHotel.Name = updatedClient.Name;
-            currentHotel.StarNumber = updatedClient.StarNumber;
-
+            currentHotel.Name = newHotel.Name;
+            currentHotel.Description = newHotel.Description;
+            currentHotel.StarNumber = newHotel.StarNumber;
+            
             Context.Hotels.Update(currentHotel);
             Context.SaveChanges();
         }
 
-        public Hotel Delete(long id)
+        public Hotel Delete(Guid id)
         {
             Hotel hotel = Get(id);
 

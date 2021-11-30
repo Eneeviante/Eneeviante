@@ -8,8 +8,8 @@ namespace ITechArtBooking.Domain.Models
 {
     public class Category
     {
-        public long Id { get; set; }
-        public long HotelId { get; set; }
+        public Guid Id { get; set; }
+        public Hotel Hotel { get; set; }
         public int BedsNumber { get; set; }
         public string Description { get; set; }
         public float CostPerDay { get; set; }

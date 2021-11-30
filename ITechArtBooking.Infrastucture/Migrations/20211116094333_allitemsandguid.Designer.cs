@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ITechArtBooking.Infrastucture.Migrations
 {
     [DbContext(typeof(EFBookingDBContext))]
-    [Migration("20211108190546_Initial")]
-    partial class Initial
+    [Migration("20211116094333_allitemsandguid")]
+    partial class allitemsandguid
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,10 +23,12 @@ namespace ITechArtBooking.Infrastucture.Migrations
 
             modelBuilder.Entity("ITechArtBooking.Domain.Models.Booking", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ClientId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("DateFrom")
                         .HasColumnType("datetime2");
@@ -34,20 +36,26 @@ namespace ITechArtBooking.Infrastucture.Migrations
                     b.Property<DateTime>("DateTo")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("RoomId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<float>("Sum")
                         .HasColumnType("real");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("RoomId");
 
                     b.ToTable("Bookings");
                 });
 
             modelBuilder.Entity("ITechArtBooking.Domain.Models.Category", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("BedsNumber")
                         .HasColumnType("int");
@@ -58,23 +66,21 @@ namespace ITechArtBooking.Infrastucture.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("HotelId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid?>("HotelId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("HotelId");
 
                     b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("ITechArtBooking.Domain.Models.Client", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long?>("BookingId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
@@ -90,17 +96,14 @@ namespace ITechArtBooking.Infrastucture.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BookingId");
-
                     b.ToTable("Clients");
                 });
 
             modelBuilder.Entity("ITechArtBooking.Domain.Models.Hotel", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -118,57 +121,69 @@ namespace ITechArtBooking.Infrastucture.Migrations
 
             modelBuilder.Entity("ITechArtBooking.Domain.Models.Review", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<long?>("ClientId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid?>("ClientId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<long>("HotelId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid?>("HotelId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("text")
+                    b.Property<string>("Text")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
 
+                    b.HasIndex("HotelId");
+
                     b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("ITechArtBooking.Domain.Models.Room", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<long?>("BookingId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("CategoryId")
-                        .HasColumnType("bigint");
+                    b.Property<Guid?>("CategoryId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Picture")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BookingId");
-
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Rooms");
                 });
 
-            modelBuilder.Entity("ITechArtBooking.Domain.Models.Client", b =>
+            modelBuilder.Entity("ITechArtBooking.Domain.Models.Booking", b =>
                 {
-                    b.HasOne("ITechArtBooking.Domain.Models.Booking", null)
-                        .WithMany("Clients")
-                        .HasForeignKey("BookingId");
+                    b.HasOne("ITechArtBooking.Domain.Models.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId");
+
+                    b.HasOne("ITechArtBooking.Domain.Models.Room", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId");
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Room");
+                });
+
+            modelBuilder.Entity("ITechArtBooking.Domain.Models.Category", b =>
+                {
+                    b.HasOne("ITechArtBooking.Domain.Models.Hotel", "Hotel")
+                        .WithMany()
+                        .HasForeignKey("HotelId");
+
+                    b.Navigation("Hotel");
                 });
 
             modelBuilder.Entity("ITechArtBooking.Domain.Models.Review", b =>
@@ -177,27 +192,22 @@ namespace ITechArtBooking.Infrastucture.Migrations
                         .WithMany()
                         .HasForeignKey("ClientId");
 
+                    b.HasOne("ITechArtBooking.Domain.Models.Hotel", "Hotel")
+                        .WithMany()
+                        .HasForeignKey("HotelId");
+
                     b.Navigation("Client");
+
+                    b.Navigation("Hotel");
                 });
 
             modelBuilder.Entity("ITechArtBooking.Domain.Models.Room", b =>
                 {
-                    b.HasOne("ITechArtBooking.Domain.Models.Booking", null)
-                        .WithMany("Rooms")
-                        .HasForeignKey("BookingId");
-
                     b.HasOne("ITechArtBooking.Domain.Models.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId");
 
                     b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("ITechArtBooking.Domain.Models.Booking", b =>
-                {
-                    b.Navigation("Clients");
-
-                    b.Navigation("Rooms");
                 });
 #pragma warning restore 612, 618
         }

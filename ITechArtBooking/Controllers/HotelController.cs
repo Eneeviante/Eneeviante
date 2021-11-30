@@ -16,9 +16,9 @@ namespace ITechArtBooking.Controllers
     public class HotelController : ControllerBase
     {
         //private readonly ClientService postsService = new(new ClientsFakeRepository());
-        private readonly IHotelRepository hotelRepository;
+        private readonly IRepository<Hotel> hotelRepository;
 
-        public HotelController(IHotelRepository _hotelRepository)
+        public HotelController(IRepository<Hotel> _hotelRepository)
         {
             hotelRepository = _hotelRepository;
         }
@@ -30,7 +30,7 @@ namespace ITechArtBooking.Controllers
         }
 
         [HttpGet("{id}", Name = "GetHotel")]
-        public IActionResult Get(long id)
+        public IActionResult Get(Guid id)
         {
             Hotel hotel = hotelRepository.Get(id);
 
@@ -43,35 +43,41 @@ namespace ITechArtBooking.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] Hotel hotel)
+        public IActionResult Create(string name, string description, int starNumber)
         {
-            if (hotel == null) {
-                return BadRequest();
-            }
-            else {
-                hotelRepository.Create(hotel);
-                return CreatedAtRoute("GetHotel", new { id = hotel.Id }, hotel);
-            }
+            Hotel hotel = new Hotel { 
+                Id = new Guid(),
+                Name = name,
+                Description = description,
+                StarNumber = starNumber
+            };
+
+            hotelRepository.Create(hotel);
+            return CreatedAtRoute("GetHotel", new { id = hotel.Id }, hotel);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(long id, [FromBody] Hotel updatedHotel)
+        public IActionResult Update(Guid id, string name, string description, int starNumber)
         {
-            if (updatedHotel == null || updatedHotel.Id != id) {
-                return BadRequest();
-            }
-
-            var hotel = hotelRepository.Get(id);
-            if (hotel == null) {
+            var oldHotel = hotelRepository.Get(id);
+            if (oldHotel == null) {
                 return NotFound();
             }
 
-            hotelRepository.Update(updatedHotel);
+            var newHotel = new Hotel {
+                Id = id,
+                Name = name,
+                Description = description,
+                StarNumber = starNumber
+            };
+
+
+            hotelRepository.Update(newHotel);
             return RedirectToRoute("GetAllHotels");
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(long id)
+        public IActionResult Delete(Guid id)
         {
             var deletedHotel = hotelRepository.Delete(id);
 
