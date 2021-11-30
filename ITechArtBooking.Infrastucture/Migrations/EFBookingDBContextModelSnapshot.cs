@@ -22,7 +22,6 @@ namespace ITechArtBooking.Infrastucture.Migrations
             modelBuilder.Entity("ITechArtBooking.Domain.Models.Booking", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("DateFrom")
@@ -31,9 +30,6 @@ namespace ITechArtBooking.Infrastucture.Migrations
                     b.Property<DateTime>("DateTo")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("RoomId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<float>("Sum")
                         .HasColumnType("real");
 
@@ -41,8 +37,6 @@ namespace ITechArtBooking.Infrastucture.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("RoomId");
 
                     b.HasIndex("UserId");
 
@@ -171,8 +165,10 @@ namespace ITechArtBooking.Infrastucture.Migrations
             modelBuilder.Entity("ITechArtBooking.Domain.Models.Booking", b =>
                 {
                     b.HasOne("ITechArtBooking.Domain.Models.Room", "Room")
-                        .WithMany()
-                        .HasForeignKey("RoomId");
+                        .WithOne("LastBooking")
+                        .HasForeignKey("ITechArtBooking.Domain.Models.Booking", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ITechArtBooking.Domain.Models.User", "User")
                         .WithMany()
@@ -223,6 +219,11 @@ namespace ITechArtBooking.Infrastucture.Migrations
             modelBuilder.Entity("ITechArtBooking.Domain.Models.Hotel", b =>
                 {
                     b.Navigation("Rooms");
+                });
+
+            modelBuilder.Entity("ITechArtBooking.Domain.Models.Room", b =>
+                {
+                    b.Navigation("LastBooking");
                 });
 #pragma warning restore 612, 618
         }

@@ -74,6 +74,7 @@ namespace ITechArtBooking.Controllers
                     Sum = sum
                 };
 
+                room.LastBooking = newBooking;
                 bookingRepository.Create(newBooking);
                 return CreatedAtRoute("GetBooking", new { id = newBooking.Id }, newBooking);
             }

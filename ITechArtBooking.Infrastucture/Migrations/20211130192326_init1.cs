@@ -117,7 +117,6 @@ namespace ITechArtBooking.Infrastucture.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DateFrom = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DateTo = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    RoomId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Sum = table.Column<float>(type: "real", nullable: false)
                 },
@@ -125,11 +124,11 @@ namespace ITechArtBooking.Infrastucture.Migrations
                 {
                     table.PrimaryKey("PK_Bookings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Bookings_Rooms_RoomId",
-                        column: x => x.RoomId,
+                        name: "FK_Bookings_Rooms_Id",
+                        column: x => x.Id,
                         principalTable: "Rooms",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Bookings_Users_UserId",
                         column: x => x.UserId,
@@ -137,11 +136,6 @@ namespace ITechArtBooking.Infrastucture.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Bookings_RoomId",
-                table: "Bookings",
-                column: "RoomId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bookings_UserId",

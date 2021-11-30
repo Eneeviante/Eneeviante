@@ -27,7 +27,8 @@ namespace ITechArtBooking.Infrastucture.Repositories
         public Hotel Get(Guid id)
         {
             return Context.Hotels
-                .Include(h => h.Rooms)
+                .Include(h => h.Rooms
+                    .Where(r => r.LastBooking == null || r.LastBooking.DateTo <= DateTime.Now))
                 .FirstOrDefault(h => h.Id == id);
         }
 

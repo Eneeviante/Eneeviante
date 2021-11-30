@@ -18,5 +18,13 @@ namespace ITechArtBooking.Infrastucture.Repositories
         public DbSet<Room> Rooms { get; set; }
         public EFBookingDBContext(DbContextOptions<EFBookingDBContext> options) : base(options)
         { }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Room>()
+                .HasOne(a => a.LastBooking).WithOne(b => b.Room)
+                .HasForeignKey<Booking>();
+        }
     }
+
 }
