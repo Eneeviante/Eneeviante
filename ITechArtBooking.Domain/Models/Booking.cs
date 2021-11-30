@@ -17,7 +17,7 @@ namespace ITechArtBooking.Domain.Models
         //[DataType(DataType.Time)]
         public DateTime DateTo { get; set; }
         public Room Room { get; set; }
-        public Client Client { get; set; }
+        public User User { get; set; }
         public float Sum { get; set; }
     }
 }

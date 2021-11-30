@@ -15,3 +15,4 @@ D:\Kurs\ITechArtBooking\ITechArtBooking.Infrastucture\obj\Debug\net5.0\ITechArtB
 D:\Kurs\ITechArtBooking\ITechArtBooking.Infrastucture\bin\Debug\net5.0\ITechArtBooking.Infrastucture.runtimeconfig.json
 D:\Kurs\ITechArtBooking\ITechArtBooking.Infrastucture\bin\Debug\net5.0\ITechArtBooking.Infrastucture.runtimeconfig.dev.json
 D:\Kurs\ITechArtBooking\ITechArtBooking.Infrastucture\obj\Debug\net5.0\ITechArtBooking.Infrastucture.genruntimeconfig.cache
+D:\Kurs\ITechArtBooking\ITechArtBooking.Infrastucture\obj\Debug\net5.0\ITechArtBooking.Infrastucture.csproj.CopyComplete

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ITechArtBooking.Domain.Models
 {
-    public class Client
+    public class User
     {
         public Guid Id { get; set; }
         public string FirstName { get; set; }

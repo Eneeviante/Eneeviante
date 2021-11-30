@@ -13,17 +13,17 @@ namespace ITechArtBooking.Controllers
     [ApiController]
     public class ReviewController : ControllerBase
     {
-        //private readonly ClientService postsService = new(new ClientsFakeRepository());
+        //private readonly UserService postsService = new(new UsersFakeRepository());
         private readonly IRepository<Review> reviewRepository;
         private readonly IRepository<Hotel> hotelRepository;
-        private readonly IRepository<Client> clientRepository;
+        private readonly IRepository<User> userRepository;
 
         public ReviewController(IRepository<Review> _reviewRepository,
-            IRepository<Hotel> _hotelRepository, IRepository<Client> _clientRepository)
+            IRepository<Hotel> _hotelRepository, IRepository<User> _userRepository)
         {
             reviewRepository = _reviewRepository;
             hotelRepository = _hotelRepository;
-            clientRepository = _clientRepository;
+            userRepository = _userRepository;
         }
 
         [HttpGet(Name = "GetAllReviews")]
@@ -46,19 +46,19 @@ namespace ITechArtBooking.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Guid hotelId, Guid clientId, string text)
+        public IActionResult Create(Guid hotelId, Guid userId, string text)
         {
-            var client = clientRepository.Get(clientId);
+            var user = userRepository.Get(userId);
             var hotel = hotelRepository.Get(hotelId);
 
-            if (client == null || hotel == null) {
+            if (user == null || hotel == null) {
                 return BadRequest();
             }
 
             Review review = new Review {
                 Id = new Guid(),
                 Hotel = hotel,
-                Client = client,
+                User = user,
                 Text = text
             };
 
@@ -67,24 +67,24 @@ namespace ITechArtBooking.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(Guid id, Guid hotelId, Guid clientId, string text)
+        public IActionResult Update(Guid id, Guid hotelId, Guid userId, string text)
         {
             var oldReview = reviewRepository.Get(id);
             if (oldReview == null) {
                 return NotFound();
             }
 
-            var newClient = clientRepository.Get(clientId);
+            var newUser = userRepository.Get(userId);
             var newHotel = hotelRepository.Get(hotelId);
 
-            if (newClient == null || newHotel == null) {
+            if (newUser == null || newHotel == null) {
                 return BadRequest();
             }
 
             Review newReview = new Review {
                 Id = id,
                 Hotel = newHotel,
-                Client = newClient,
+                User = newUser,
                 Text = text
             };
 

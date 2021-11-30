@@ -9,6 +9,7 @@ namespace ITechArtBooking.Domain.Models
     public class Room
     {
         public Guid Id { get; set; }
+        public short Number { get; set; }
         public Category Category { get; set; }
         public string Picture { get; set; }
     }

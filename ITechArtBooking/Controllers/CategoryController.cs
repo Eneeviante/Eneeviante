@@ -14,7 +14,7 @@ namespace ITechArtBooking.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        //private readonly ClientService postsService = new(new ClientsFakeRepository());
+        //private readonly UserService postsService = new(new UsersFakeRepository());
         private readonly IRepository<Category> categoryRepository;
         private readonly IRepository<Hotel> hotelRepository;
 

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ITechArtBooking.Domain.Interfaces;
 using ITechArtBooking.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ITechArtBooking.Infrastucture.Repositories
 {
@@ -19,12 +20,15 @@ namespace ITechArtBooking.Infrastucture.Repositories
 
         public IEnumerable<Hotel> GetAll()
         {
-            return Context.Hotels;
+            return Context.Hotels
+                .Include(h => h.Rooms);
         }
 
         public Hotel Get(Guid id)
         {
-            return Context.Hotels.Find(id);
+            return Context.Hotels
+                .Include(h => h.Rooms)
+                .FirstOrDefault(h => h.Id == id);
         }
 
         public void Create(Hotel hotel)
@@ -40,6 +44,7 @@ namespace ITechArtBooking.Infrastucture.Repositories
             currentHotel.Name = newHotel.Name;
             currentHotel.Description = newHotel.Description;
             currentHotel.StarNumber = newHotel.StarNumber;
+            currentHotel.Rooms = newHotel.Rooms;
             
             Context.Hotels.Update(currentHotel);
             Context.SaveChanges();

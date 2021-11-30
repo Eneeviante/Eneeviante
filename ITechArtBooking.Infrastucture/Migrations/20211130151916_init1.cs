@@ -3,25 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ITechArtBooking.Infrastucture.Migrations
 {
-    public partial class allitemsandguid : Migration
+    public partial class init1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Clients",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    MiddleName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Clients", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Hotels",
                 columns: table => new
@@ -34,6 +19,21 @@ namespace ITechArtBooking.Infrastucture.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Hotels", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MiddleName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -63,22 +63,22 @@ namespace ITechArtBooking.Infrastucture.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     HotelId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Reviews", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Reviews_Clients_ClientId",
-                        column: x => x.ClientId,
-                        principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_Reviews_Hotels_HotelId",
                         column: x => x.HotelId,
                         principalTable: "Hotels",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Reviews_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -88,8 +88,10 @@ namespace ITechArtBooking.Infrastucture.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Number = table.Column<short>(type: "smallint", nullable: false),
                     CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Picture = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Picture = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HotelId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -98,6 +100,12 @@ namespace ITechArtBooking.Infrastucture.Migrations
                         name: "FK_Rooms_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Rooms_Hotels_HotelId",
+                        column: x => x.HotelId,
+                        principalTable: "Hotels",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -110,30 +118,25 @@ namespace ITechArtBooking.Infrastucture.Migrations
                     DateFrom = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DateTo = table.Column<DateTime>(type: "datetime2", nullable: false),
                     RoomId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Sum = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Bookings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Bookings_Clients_ClientId",
-                        column: x => x.ClientId,
-                        principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_Bookings_Rooms_RoomId",
                         column: x => x.RoomId,
                         principalTable: "Rooms",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Bookings_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Bookings_ClientId",
-                table: "Bookings",
-                column: "ClientId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bookings_RoomId",
@@ -141,14 +144,14 @@ namespace ITechArtBooking.Infrastucture.Migrations
                 column: "RoomId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Bookings_UserId",
+                table: "Bookings",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Categories_HotelId",
                 table: "Categories",
                 column: "HotelId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Reviews_ClientId",
-                table: "Reviews",
-                column: "ClientId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reviews_HotelId",
@@ -156,9 +159,19 @@ namespace ITechArtBooking.Infrastucture.Migrations
                 column: "HotelId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Reviews_UserId",
+                table: "Reviews",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Rooms_CategoryId",
                 table: "Rooms",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rooms_HotelId",
+                table: "Rooms",
+                column: "HotelId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -173,7 +186,7 @@ namespace ITechArtBooking.Infrastucture.Migrations
                 name: "Rooms");
 
             migrationBuilder.DropTable(
-                name: "Clients");
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Categories");

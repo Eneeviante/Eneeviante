@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ITechArtBooking.Infrastucture.Migrations
 {
     [DbContext(typeof(EFBookingDBContext))]
-    [Migration("20211116094333_allitemsandguid")]
-    partial class allitemsandguid
+    [Migration("20211130151916_init1")]
+    partial class init1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -27,9 +27,6 @@ namespace ITechArtBooking.Infrastucture.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ClientId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("DateFrom")
                         .HasColumnType("datetime2");
 
@@ -42,11 +39,14 @@ namespace ITechArtBooking.Infrastucture.Migrations
                     b.Property<float>("Sum")
                         .HasColumnType("real");
 
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientId");
-
                     b.HasIndex("RoomId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Bookings");
                 });
@@ -76,29 +76,6 @@ namespace ITechArtBooking.Infrastucture.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("ITechArtBooking.Domain.Models.Client", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MiddleName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Clients");
-                });
-
             modelBuilder.Entity("ITechArtBooking.Domain.Models.Hotel", b =>
                 {
                     b.Property<Guid>("Id")
@@ -125,20 +102,20 @@ namespace ITechArtBooking.Infrastucture.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ClientId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("HotelId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Text")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientId");
-
                     b.HasIndex("HotelId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Reviews");
                 });
@@ -152,6 +129,12 @@ namespace ITechArtBooking.Infrastucture.Migrations
                     b.Property<Guid?>("CategoryId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("HotelId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<short>("Number")
+                        .HasColumnType("smallint");
+
                     b.Property<string>("Picture")
                         .HasColumnType("nvarchar(max)");
 
@@ -159,22 +142,47 @@ namespace ITechArtBooking.Infrastucture.Migrations
 
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("HotelId");
+
                     b.ToTable("Rooms");
+                });
+
+            modelBuilder.Entity("ITechArtBooking.Domain.Models.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MiddleName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("ITechArtBooking.Domain.Models.Booking", b =>
                 {
-                    b.HasOne("ITechArtBooking.Domain.Models.Client", "Client")
-                        .WithMany()
-                        .HasForeignKey("ClientId");
-
                     b.HasOne("ITechArtBooking.Domain.Models.Room", "Room")
                         .WithMany()
                         .HasForeignKey("RoomId");
 
-                    b.Navigation("Client");
+                    b.HasOne("ITechArtBooking.Domain.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Room");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ITechArtBooking.Domain.Models.Category", b =>
@@ -188,17 +196,17 @@ namespace ITechArtBooking.Infrastucture.Migrations
 
             modelBuilder.Entity("ITechArtBooking.Domain.Models.Review", b =>
                 {
-                    b.HasOne("ITechArtBooking.Domain.Models.Client", "Client")
-                        .WithMany()
-                        .HasForeignKey("ClientId");
-
                     b.HasOne("ITechArtBooking.Domain.Models.Hotel", "Hotel")
                         .WithMany()
                         .HasForeignKey("HotelId");
 
-                    b.Navigation("Client");
+                    b.HasOne("ITechArtBooking.Domain.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Hotel");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ITechArtBooking.Domain.Models.Room", b =>
@@ -207,7 +215,16 @@ namespace ITechArtBooking.Infrastucture.Migrations
                         .WithMany()
                         .HasForeignKey("CategoryId");
 
+                    b.HasOne("ITechArtBooking.Domain.Models.Hotel", null)
+                        .WithMany("Rooms")
+                        .HasForeignKey("HotelId");
+
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("ITechArtBooking.Domain.Models.Hotel", b =>
+                {
+                    b.Navigation("Rooms");
                 });
 #pragma warning restore 612, 618
         }

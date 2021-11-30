@@ -10,7 +10,7 @@ namespace ITechArtBooking.Domain.Models
     {
         public Guid Id { get; set; }
         public Hotel Hotel { get; set; }
-        public Client Client { get; set; }
+        public User User { get; set; }
         public string Text { get; set; }
     }
 }
