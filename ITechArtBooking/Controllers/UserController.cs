@@ -16,15 +16,15 @@ namespace ITechArtBooking.Controllers
     public class UserController : ControllerBase
     {
         //private readonly UserService postsService = new(new UsersFakeRepository());
-        private readonly IRepository<User> userRepository;
+        private readonly IUserRepository userRepository;
 
-        public UserController(IRepository<User> _userRepository)
+        public UserController(IUserRepository _userRepository)
         {
             userRepository = _userRepository;
         }
 
         [HttpGet(Name = "GetAllUsers")]
-        public IEnumerable<User> GetAll()
+        public IQueryable GetAll()
         {
             return userRepository.GetAll();
         }

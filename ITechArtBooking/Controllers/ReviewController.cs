@@ -14,22 +14,22 @@ namespace ITechArtBooking.Controllers
     public class ReviewController : ControllerBase
     {
         //private readonly UserService postsService = new(new UsersFakeRepository());
-        private readonly IRepository<Review> reviewRepository;
+        private readonly IReviewRepository reviewRepository;
         private readonly IRepository<Hotel> hotelRepository;
-        private readonly IRepository<User> userRepository;
+        private readonly IUserRepository userRepository;
 
-        public ReviewController(IRepository<Review> _reviewRepository,
-            IRepository<Hotel> _hotelRepository, IRepository<User> _userRepository)
+        public ReviewController(IReviewRepository _reviewRepository,
+            IRepository<Hotel> _hotelRepository, IUserRepository _userRepository)
         {
             reviewRepository = _reviewRepository;
             hotelRepository = _hotelRepository;
             userRepository = _userRepository;
         }
 
-        [HttpGet(Name = "GetAllReviews")]
-        public IEnumerable<Review> GetAll()
+        [HttpGet(Name = "GetAllReviewsAboutHotel")]
+        public IEnumerable<Review> GetAll(Guid hotelId)
         {
-            return reviewRepository.GetAll();
+            return reviewRepository.GetAll(hotelId);
         }
 
         [HttpGet("{id}", Name = "GetReview")]
@@ -89,7 +89,7 @@ namespace ITechArtBooking.Controllers
             };
 
             reviewRepository.Update(newReview);
-            return RedirectToRoute("GetAllReviews");
+            return RedirectToRoute("GetAllReviewsAboutHotel");
         }
 
         [HttpDelete("{id}")]

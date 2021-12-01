@@ -36,18 +36,14 @@ namespace ITechArtBooking
             string connection = Configuration.GetConnectionString("DefaultConnection");
             //gets the options object that configures the database for the context class
             services.AddDbContext<EFBookingDBContext>(options => {
-                options.UseSqlServer(connection
-                    //sqlServerOptionsAction: sqlOptions => {
-                    //    sqlOptions.EnableRetryOnFailure();
-                    //}
-                    );
+                options.UseSqlServer(connection);
             });
 
-            services.AddTransient<IRepository<User>, EFUserRepository>();          //defines a service that creates a new instance
+            services.AddTransient<IUserRepository, EFUserRepository>();          //defines a service that creates a new instance
             services.AddTransient<IRepository<Hotel>, EFHotelRepository>();            //of the EFUserRepository class
             services.AddTransient<IRepository<Category>, EFCategoryRepository>();      //every time an instance of the IUserRepository type is required
-            services.AddTransient<IRepository<Review>, EFReviewRepository>();
-            services.AddTransient<IRepository<Room>, EFRoomRepository>();
+            services.AddTransient<IReviewRepository, EFReviewRepository>();
+            services.AddTransient<IRoomRepository, EFRoomRepository>();
             services.AddTransient<IRepository<Booking>, EFBookingRepository>();
         }
 

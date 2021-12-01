@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ITechArtBooking.Infrastucture.Repositories
 {
-    public class EFRoomRepository : IRepository<Room>
+    public class EFRoomRepository : IRoomRepository
     {
         private readonly EFBookingDBContext Context;
 
@@ -18,11 +18,13 @@ namespace ITechArtBooking.Infrastucture.Repositories
             Context = context;
         }
 
-        public IEnumerable<Room> GetAll()
+        public IEnumerable<Room> GetAll(Guid userId)
         {
-            return Context.Rooms
-                .Include(r => r.Category)
-                .Include(h => h.Category.Hotel)
+            return Context.Bookings
+                .Where(b => b.User.Id == userId)
+                .Select(b => b.Room)
+                //.Include(r => r.Category)
+                //.ThenInclude(c => c.Hotel)
                 .ToList();
         }
 

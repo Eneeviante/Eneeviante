@@ -15,11 +15,11 @@ namespace ITechArtBooking.Controllers
     public class RoomController : ControllerBase
     {
         //private readonly UserService postsService = new(new UsersFakeRepository());
-        private readonly IRepository<Room> roomRepository;
+        private readonly IRoomRepository roomRepository;
         private readonly IRepository<Category> categoryRepository;
         private readonly IRepository<Hotel> hotelRepository;
 
-        public RoomController(IRepository<Room> _roomRepository,
+        public RoomController(IRoomRepository _roomRepository,
             IRepository<Category> _categoryRepository, IRepository<Hotel> _hotelRepository)
         {
             categoryRepository = _categoryRepository;
@@ -28,9 +28,9 @@ namespace ITechArtBooking.Controllers
         }
 
         [HttpGet(Name = "GetAllRooms")]
-        public IEnumerable<Room> GetAll()
+        public IEnumerable<Room> GetAll(Guid userId)
         {
-            return roomRepository.GetAll();
+            return roomRepository.GetAll(userId);
         }
 
         [HttpGet("{id}", Name = "GetRoom")]

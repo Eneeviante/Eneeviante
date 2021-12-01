@@ -15,11 +15,11 @@ namespace ITechArtBooking.Controllers
     public class BookingController : ControllerBase
     {
         private readonly IRepository<Booking> bookingRepository;
-        private readonly IRepository<User> userRepository;
-        private readonly IRepository<Room> roomRepository;
+        private readonly IUserRepository userRepository;
+        private readonly IRoomRepository roomRepository;
 
         public BookingController(IRepository<Booking> _bookingRepository,
-            IRepository<User> _userRepository, IRepository<Room> _roomRepository)
+            IUserRepository _userRepository, IRoomRepository _roomRepository)
         {
             bookingRepository = _bookingRepository;
             userRepository = _userRepository;

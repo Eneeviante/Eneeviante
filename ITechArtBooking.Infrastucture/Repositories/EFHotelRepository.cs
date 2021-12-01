@@ -20,8 +20,7 @@ namespace ITechArtBooking.Infrastucture.Repositories
 
         public IEnumerable<Hotel> GetAll()
         {
-            return Context.Hotels
-                .Include(h => h.Rooms);
+            return Context.Hotels;
         }
 
         public Hotel Get(Guid id)

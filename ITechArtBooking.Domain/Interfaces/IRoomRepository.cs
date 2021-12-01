@@ -7,12 +7,12 @@ using ITechArtBooking.Domain.Models;
 
 namespace ITechArtBooking.Domain.Interfaces
 {
-    public interface IUserRepository
+    public interface IRoomRepository
     {
-        IQueryable GetAll();
-        User Get(Guid id);
-        void Create(User user);
-        void Update(User user);
-        User Delete(Guid id);
+        IEnumerable<Room> GetAll(Guid userId);
+        Room Get(Guid id);
+        void Create(Room room);
+        void Update(Room room);
+        Room Delete(Guid id);
     }
 }

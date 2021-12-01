@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using ITechArtBooking.Domain.Interfaces;
 using ITechArtBooking.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ITechArtBooking.Infrastucture.Repositories
 {
-    public class EFUserRepository : IRepository<User>
+    public class EFUserRepository : IUserRepository
     {
         private readonly EFBookingDBContext Context;
 
@@ -17,9 +18,22 @@ namespace ITechArtBooking.Infrastucture.Repositories
             Context = context;
         }
 
-        public IEnumerable<User> GetAll()
+        public IQueryable GetAll()
         {
-            return Context.Users;
+            return Context.Users
+                .Join(Context.Bookings
+                .Include(b => b.Room)
+                .ThenInclude(r => r.Category),
+                user => user.Id,
+                booking => booking.User.Id,
+                (user, booking) => new {
+                    user,
+                    booking.Id,
+                    booking.Room,
+                    booking.DateFrom,
+                    booking.DateTo,
+                    booking.Sum
+                });
         }
 
         public User Get(Guid id)

@@ -10,11 +10,7 @@ namespace ITechArtBooking.Domain.Models
     public class Booking
     {
         public Guid Id { get; set; }
-
-        //[DataType(DataType.Time)]
         public DateTime DateFrom { get; set; }
-
-        //[DataType(DataType.Time)]
         public DateTime DateTo { get; set; }
         public Room Room { get; set; }
         public User User { get; set; }
