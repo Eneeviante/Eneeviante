@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using ITechArtBooking.Domain.Models;
 //using ITechArtBooking.Infrastucture.Repositories.Fakes;
 using ITechArtBooking.Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ITechArtBooking.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class RoomController : ControllerBase

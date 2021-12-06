@@ -3,17 +3,16 @@ using ITechArtBooking.Domain.Models;
 using ITechArtBooking.Infrastucture.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace ITechArtBooking
 {
@@ -32,7 +31,33 @@ namespace ITechArtBooking
             services.AddControllers();
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ITechArtBooking", Version = "v1" });
+                c.AddSecurityDefinition("Bearer",
+                    new OpenApiSecurityScheme {
+                        In = ParameterLocation.Header,
+                        Description = @"JWT Authorization header using the Bearer scheme. 
+                                      Enter 'Bearer' [space] and then your token in the text input below.
+                                      Example: 'Bearer 12345abcdef'",
+                        Name = "Authorization",
+                        Type = SecuritySchemeType.ApiKey
+                    });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        },
+                        Scheme = "oauth2",
+                        Name = "Bearer",
+                        In = ParameterLocation.Header,
+                    },
+                    new string[] { }
+                }
+                });
             });
+
             string connection = Configuration.GetConnectionString("DefaultConnection");
             //gets the options object that configures the database for the context class
             services.AddDbContext<EFBookingDBContext>(options => {
@@ -45,6 +70,24 @@ namespace ITechArtBooking
             services.AddTransient<IReviewRepository, EFReviewRepository>();
             services.AddTransient<IRoomRepository, EFRoomRepository>();
             services.AddTransient<IRepository<Booking>, EFBookingRepository>();
+
+            services.AddIdentityCore<User>()
+                .AddRoles<IdentityRole<Guid>>() 
+                .AddEntityFrameworkStores<EFBookingDBContext>();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                 .AddJwtBearer(
+                     options => {
+                         options.TokenValidationParameters = new TokenValidationParameters {
+                             ValidateIssuer = false,
+                             ValidateAudience = false,
+                             ValidateLifetime = false,
+                             ValidateIssuerSigningKey = false,
+                             IssuerSigningKey = new SymmetricSecurityKey(
+                                Encoding.UTF8.GetBytes("aksdokjafbkjasbfjabojsfbda"))
+                         };
+                     }
+                 );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,6 +102,7 @@ namespace ITechArtBooking
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
