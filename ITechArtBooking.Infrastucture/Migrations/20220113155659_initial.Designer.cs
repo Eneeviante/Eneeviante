@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ITechArtBooking.Infrastucture.Migrations
 {
     [DbContext(typeof(EFBookingDBContext))]
-    [Migration("20211201143602_init1")]
-    partial class init1
+    [Migration("20220113155659_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

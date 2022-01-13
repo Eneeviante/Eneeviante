@@ -9,6 +9,7 @@ using ITechArtBooking.Domain.Models;
 //using ITechArtBooking.Infrastucture.Repositories.Fakes;
 using ITechArtBooking.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using ITechArtBooking.Helper;
 
 namespace ITechArtBooking.Controllers
 {
@@ -17,7 +18,6 @@ namespace ITechArtBooking.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        //private readonly UserService postsService = new(new UsersFakeRepository());
         private readonly IUserRepository userRepository;
 
         public UserController(IUserRepository _userRepository)
@@ -25,71 +25,22 @@ namespace ITechArtBooking.Controllers
             userRepository = _userRepository;
         }
 
+        /*Просмотреть список всех пользователей в системе*/
+        [Authorize(Roles = "Admin")]
         [HttpGet(Name = "GetAllUsers")]
-        public IQueryable GetAll()
+        public async Task<IQueryable> GetAllAsync()
         {
-            return userRepository.GetAll();
+            return await userRepository.GetAllAsync();
         }
 
-        [HttpGet("{id}", Name = "GetUser")]
-        public IActionResult Get(Guid id)
+        /*Удалить свой аккаунт*/
+        [Authorize(Roles = "User")]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteAsync()
         {
-            User user = userRepository.Get(id);
+            var userId = User.GetUserId();
 
-            if(user == null) {
-                return NotFound();
-            }
-            else {
-                return new ObjectResult(user);
-            }
-        }
-
-        [HttpPost]
-        public IActionResult Create(string firstName, string middleName,
-            string lastName, string phoneNumber)
-        {
-            User user = new User { 
-                Id = new Guid(),
-                FirstName = firstName,
-                MiddleName =middleName,
-                LastName = lastName,
-                PhoneNumber = phoneNumber
-            };
-
-            if (user == null) {
-                return BadRequest();
-            }
-            else {
-                userRepository.Create(user);
-                return CreatedAtRoute("GetUser", new { id = user.Id }, user);
-            }
-        }
-
-        [HttpPut("{id}")]
-        public IActionResult Update(Guid id, string firstName, string middleName,
-            string lastName, string phoneNumber)
-        {
-            var user = userRepository.Get(id);
-            if (user == null) {
-                return NotFound();
-            }
-
-            var newUser = new User {
-                Id = id,
-                FirstName = firstName,
-                MiddleName = middleName,
-                LastName = lastName,
-                PhoneNumber = phoneNumber
-            };
-
-            userRepository.Update(newUser);
-            return RedirectToRoute("GetAllUsers");
-        }
-
-        [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
-        {
-            var deletedUser = userRepository.Delete(id);
+            var deletedUser = await userRepository.DeleteAsync(userId);
 
             if (deletedUser == null) {
                 return BadRequest();

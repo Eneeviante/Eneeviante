@@ -7,6 +7,7 @@ using ITechArtBooking.Domain.Models;
 //using ITechArtBooking.Infrastucture.Repositories.Fakes;
 using ITechArtBooking.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using ITechArtBooking.Helper;
 
 namespace ITechArtBooking.Controllers
 {
@@ -17,27 +18,28 @@ namespace ITechArtBooking.Controllers
     {
         //private readonly UserService postsService = new(new UsersFakeRepository());
         private readonly IReviewRepository reviewRepository;
-        private readonly IRepository<Hotel> hotelRepository;
+        private readonly IHotelRepository hotelRepository;
         private readonly IUserRepository userRepository;
 
         public ReviewController(IReviewRepository _reviewRepository,
-            IRepository<Hotel> _hotelRepository, IUserRepository _userRepository)
+            IHotelRepository _hotelRepository, IUserRepository _userRepository)
         {
             reviewRepository = _reviewRepository;
             hotelRepository = _hotelRepository;
             userRepository = _userRepository;
         }
 
+        [Authorize(Roles = "User")]
         [HttpGet(Name = "GetAllReviewsAboutHotel")]
-        public IEnumerable<Review> GetAll(Guid hotelId)
+        public async Task<IEnumerable<Review>> GetAllAsync(Guid hotelId)
         {
-            return reviewRepository.GetAll(hotelId);
+            return await reviewRepository.GetAllAsync(hotelId);
         }
 
         [HttpGet("{id}", Name = "GetReview")]
-        public IActionResult Get(Guid id)
+        public async Task<IActionResult> GetAsync(Guid id)
         {
-            Review review = reviewRepository.Get(id);
+            Review review = await reviewRepository.GetAsync(id);
 
             if (review == null) {
                 return NotFound();
@@ -47,11 +49,15 @@ namespace ITechArtBooking.Controllers
             }
         }
 
+        /*Оставлять отзыв о конкретном отеле*/
+        [Authorize(Roles = "User")]
         [HttpPost]
-        public IActionResult Create(Guid hotelId, Guid userId, string text)
+        public async Task<IActionResult> CreateAsync(Guid hotelId, string text)
         {
-            var user = userRepository.Get(userId);
-            var hotel = hotelRepository.Get(hotelId);
+            var userId = this.User.GetUserId();
+
+            var user = await userRepository.GetAsync(userId);
+            var hotel = await hotelRepository.GetAsync(hotelId);
 
             if (user == null || hotel == null) {
                 return BadRequest();
@@ -64,46 +70,8 @@ namespace ITechArtBooking.Controllers
                 Text = text
             };
 
-            reviewRepository.Create(review);
+            await reviewRepository.CreateAsync(review);
             return CreatedAtRoute("GetReview", new { id = review.Id }, review);
-        }
-
-        [HttpPut("{id}")]
-        public IActionResult Update(Guid id, Guid hotelId, Guid userId, string text)
-        {
-            var oldReview = reviewRepository.Get(id);
-            if (oldReview == null) {
-                return NotFound();
-            }
-
-            var newUser = userRepository.Get(userId);
-            var newHotel = hotelRepository.Get(hotelId);
-
-            if (newUser == null || newHotel == null) {
-                return BadRequest();
-            }
-
-            Review newReview = new Review {
-                Id = id,
-                Hotel = newHotel,
-                User = newUser,
-                Text = text
-            };
-
-            reviewRepository.Update(newReview);
-            return RedirectToRoute("GetAllReviewsAboutHotel");
-        }
-
-        [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
-        {
-            var deletedReview = reviewRepository.Delete(id);
-
-            if (deletedReview == null) {
-                return BadRequest();
-            }
-
-            return new ObjectResult(deletedReview);
         }
     }
 }

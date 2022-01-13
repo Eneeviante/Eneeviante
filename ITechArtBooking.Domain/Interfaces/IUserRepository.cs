@@ -9,10 +9,10 @@ namespace ITechArtBooking.Domain.Interfaces
 {
     public interface IUserRepository
     {
-        IQueryable GetAll();
-        User Get(Guid id);
-        void Create(User user);
-        void Update(User user);
-        User Delete(Guid id);
+        Task<IQueryable> GetAllAsync();
+        Task<User> GetAsync(Guid id);
+        Task CreateAsync(User user);
+        Task UpdateAsync(User user);
+        Task<User> DeleteAsync(Guid id);
     }
 }

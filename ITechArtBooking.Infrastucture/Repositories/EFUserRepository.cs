@@ -18,7 +18,7 @@ namespace ITechArtBooking.Infrastucture.Repositories
             Context = context;
         }
 
-        public IQueryable GetAll()
+        public async Task<IQueryable> GetAllAsync()
         {
             return Context.Users
                 .Join(Context.Bookings
@@ -36,20 +36,20 @@ namespace ITechArtBooking.Infrastucture.Repositories
                 });
         }
 
-        public User Get(Guid id)
+        public async Task<User> GetAsync(Guid id)
         {
-            return Context.Users.Find(id);
+            return await Context.Users.FindAsync(id);
         }
 
-        public void Create(User user)
+        public async Task CreateAsync(User user)
         {
             Context.Users.Add(user);
-            Context.SaveChanges();
+            await Context.SaveChangesAsync();
         }
 
-        public void Update(User newUser)
+        public async Task UpdateAsync(User newUser)
         {
-            User currentUser = Get(newUser.Id);
+            User currentUser = await GetAsync(newUser.Id);
 
             currentUser.LastName = newUser.LastName;
             currentUser.FirstName = newUser.FirstName;
@@ -57,16 +57,16 @@ namespace ITechArtBooking.Infrastucture.Repositories
             currentUser.PhoneNumber = newUser.PhoneNumber;
 
             Context.Users.Update(currentUser);
-            Context.SaveChanges();
+            await Context.SaveChangesAsync();
         }
 
-        public User Delete(Guid id)
+        public async Task<User> DeleteAsync(Guid id)
         {
-            User user = Get(id);
+            User user = await GetAsync(id);
 
             if(user != null) {
                 Context.Users.Remove(user);
-                Context.SaveChanges();
+                await Context.SaveChangesAsync();
             }
 
             return user;

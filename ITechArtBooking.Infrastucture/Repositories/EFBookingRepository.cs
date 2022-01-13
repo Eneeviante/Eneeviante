@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ITechArtBooking.Infrastucture.Repositories
 {
-    public class EFBookingRepository : IRepository<Booking>
+    public class EFBookingRepository : IBookingRepository
     {
         private readonly EFBookingDBContext Context;
 
@@ -17,52 +17,37 @@ namespace ITechArtBooking.Infrastucture.Repositories
         {
             Context = context;
         }
-
-        public IEnumerable<Booking> GetAll()
+        public async Task<IEnumerable<Booking>> GetAllAsync()
         {
-            return Context.Bookings
-                .Include(b => b.User)
-                .Include(b => b.Room)
-                .ThenInclude(r => r.Category)
-                .ThenInclude(c => c.Hotel)
-                .ToList();
-        }
-
-        public Booking Get(Guid id)
-        {
-            return Context.Bookings
+            return await Context.Bookings
                 .Include(b => b.Room)
                 .ThenInclude(r => r.Category)
                 .Include(b => b.User)
-                .FirstOrDefault(b => b.Id == id);
+                .ToListAsync();
         }
 
-        public void Create(Booking booking)
+        public async Task<Booking> GetAsync(Guid id)
+        {
+            return await Context.Bookings
+                .Include(b => b.Room)
+                .ThenInclude(r => r.Category)
+                .Include(b => b.User)
+                .FirstOrDefaultAsync(b => b.Id == id);
+        }
+
+        public async Task CreateAsync(Booking booking)
         {
             Context.Bookings.Add(booking);
-            Context.SaveChanges();
+            await Context.SaveChangesAsync();
         }
 
-        public void Update(Booking booking)
+        public async Task<Booking> DeleteAsync(Guid id)
         {
-            Booking currentBooking = Get(booking.Id);
-
-            currentBooking.DateFrom = booking.DateFrom;
-            currentBooking.DateTo = booking.DateTo;
-            currentBooking.Room = booking.Room;
-            currentBooking.User = booking.User;
-
-            Context.Bookings.Update(currentBooking);
-            Context.SaveChanges();
-        }
-
-        public Booking Delete(Guid id)
-        {
-            Booking booking = Get(id);
+            Booking booking = await GetAsync(id);
 
             if (booking != null) {
                 Context.Bookings.Remove(booking);
-                Context.SaveChanges();
+                await Context.SaveChangesAsync();
             }
 
             return booking;

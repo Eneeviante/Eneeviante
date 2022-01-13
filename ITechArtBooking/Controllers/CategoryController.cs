@@ -17,40 +17,29 @@ namespace ITechArtBooking.Controllers
     public class CategoryController : ControllerBase
     {
         //private readonly UserService postsService = new(new UsersFakeRepository());
-        private readonly IRepository<Category> categoryRepository;
-        private readonly IRepository<Hotel> hotelRepository;
+        private readonly ICategoryRepository categoryRepository;
+        private readonly IHotelRepository hotelRepository;
 
-        public CategoryController(IRepository<Category> _categoryRepository,
-            IRepository<Hotel> _hotelRepository)
+        public CategoryController(ICategoryRepository _categoryRepository,
+            IHotelRepository _hotelRepository)
         {
             categoryRepository = _categoryRepository;
             hotelRepository = _hotelRepository;
         }
 
-        [HttpGet(Name = "GetAllCategories")]
-        public IEnumerable<Category> GetAll()
+        [Authorize(Roles = "User")]
+        [HttpGet(Name = "GetAllCategoriesFromHotel")]
+        public async Task<IEnumerable<Category>> GetAllAsync(Guid id)
         {
-            return categoryRepository.GetAll();
+            return await categoryRepository.GetAllAsync(id);
         }
 
-        [HttpGet("{id}", Name = "GetCategory")]
-        public IActionResult Get(Guid id)
-        {
-            Category category = categoryRepository.Get(id);
-
-            if (category == null) {
-                return NotFound();
-            }
-            else {
-                return new ObjectResult(category);
-            }
-        }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        public IActionResult Create(Guid hotelId, int bedsNumber,
+        public async Task<IActionResult> CreateAsync(Guid hotelId, int bedsNumber,
             string description, float costPerDay)
         {
-            var hotel = hotelRepository.Get(hotelId);
+            var hotel = await hotelRepository.GetAsync(hotelId);
             if (hotel == null) {
                 return BadRequest();
             }
@@ -63,40 +52,15 @@ namespace ITechArtBooking.Controllers
                 Description = description
             };
 
-            categoryRepository.Create(newCategory);
+            await categoryRepository.CreateAsync(newCategory);
             return CreatedAtRoute("GetCategory", new { id = newCategory.Id }, newCategory);
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Update(Guid id, Guid hotelId, int bedsNumber,
-            string description, float costPerDay)
-        {
-            var newHotel = hotelRepository.Get(hotelId);
-            if (newHotel == null) {
-                return BadRequest();
-            }
-
-            var oldCategory = categoryRepository.Get(id);
-            if (oldCategory == null) {
-                return NotFound();
-            }
-
-            Category newCategory = new Category {
-                Id = id,
-                Hotel = newHotel,
-                BedsNumber = bedsNumber,
-                Description = description,
-                CostPerDay = costPerDay
-            };
-
-            categoryRepository.Update(newCategory);
-            return RedirectToRoute("GetAllCategories");
-        }
-
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> DeleteAsync(Guid id)
         {
-            var deletedCategory = categoryRepository.Delete(id);
+            var deletedCategory = await categoryRepository.DeleteAsync(id);
 
             if (deletedCategory == null) {
                 return BadRequest();

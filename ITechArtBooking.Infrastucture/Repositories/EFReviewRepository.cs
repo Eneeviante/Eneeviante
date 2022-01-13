@@ -18,48 +18,48 @@ namespace ITechArtBooking.Infrastucture.Repositories
             Context = context;
         }
 
-        public IEnumerable<Review> GetAll(Guid hotelId)
+        public async Task<IEnumerable<Review>> GetAllAsync(Guid hotelId)
         {
-            return Context.Reviews
+            return await Context.Reviews
                 .Include(r => r.User)
                 .Include(r => r.Hotel)
                 .Where(r => r.Hotel.Id == hotelId)
-                .ToList();
+                .ToListAsync();
         }
 
-        public Review Get(Guid id)
+        public async Task<Review> GetAsync(Guid id)
         {
-            return Context.Reviews
+            return await Context.Reviews
                 .Include(r=>r.Hotel)
                 .Include(r=>r.User)
-                .FirstOrDefault(r => r.Id == id);
+                .FirstOrDefaultAsync(r => r.Id == id);
         }
 
-        public void Create(Review review)
+        public async Task CreateAsync(Review review)
         {
             Context.Reviews.Add(review);
-            Context.SaveChanges();
+            await Context.SaveChangesAsync();
         }
 
-        public void Update(Review review)
+        public async Task UpdateAsync(Review review)
         {
-            Review currentReview = Get(review.Id);
+            Review currentReview = await GetAsync(review.Id);
 
             currentReview.User = review.User;
             currentReview.Hotel = review.Hotel;
             currentReview.Text = review.Text;
 
             Context.Reviews.Update(currentReview);
-            Context.SaveChanges();
+            await Context.SaveChangesAsync();
         }
 
-        public Review Delete(Guid id)
+        public async Task<Review> DeleteAsync(Guid id)
         {
-            Review review = Get(id);
+            Review review = await GetAsync(id);
 
             if (review != null) {
                 Context.Reviews.Remove(review);
-                Context.SaveChanges();
+                await Context.SaveChangesAsync();
             }
 
             return review;

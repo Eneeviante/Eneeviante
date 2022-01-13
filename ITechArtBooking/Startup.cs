@@ -13,6 +13,7 @@ using System;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using ITechArtBooking.Infrastucture.Repositories.Fakes;
 
 namespace ITechArtBooking
 {
@@ -65,14 +66,14 @@ namespace ITechArtBooking
             });
 
             services.AddTransient<IUserRepository, EFUserRepository>();          //defines a service that creates a new instance
-            services.AddTransient<IRepository<Hotel>, EFHotelRepository>();            //of the EFUserRepository class
-            services.AddTransient<IRepository<Category>, EFCategoryRepository>();      //every time an instance of the IUserRepository type is required
+            services.AddTransient<IHotelRepository, EFHotelRepository>();            //of the EFUserRepository class
+            services.AddTransient<ICategoryRepository, EFCategoryRepository>();      //every time an instance of the IUserRepository type is required
             services.AddTransient<IReviewRepository, EFReviewRepository>();
             services.AddTransient<IRoomRepository, EFRoomRepository>();
-            services.AddTransient<IRepository<Booking>, EFBookingRepository>();
+            services.AddTransient<IBookingRepository, EFBookingRepository>();
 
             services.AddIdentityCore<User>()
-                .AddRoles<IdentityRole<Guid>>() 
+                .AddRoles<IdentityRole<Guid>>()
                 .AddEntityFrameworkStores<EFBookingDBContext>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -91,7 +92,7 @@ namespace ITechArtBooking
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -109,6 +110,8 @@ namespace ITechArtBooking
             {
                 endpoints.MapControllers();
             });
+
+            SeedFirstData.SeedAdminUser(serviceProvider);
         }
     }
 }

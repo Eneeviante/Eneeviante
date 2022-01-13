@@ -18,48 +18,57 @@ namespace ITechArtBooking.Infrastucture.Repositories
             Context = context;
         }
 
-        public IEnumerable<Room> GetAll(Guid userId)
+        public async Task<IEnumerable<Room>> GetAllByUserAsync(Guid userId)
         {
-            return Context.Bookings
+            return await Context.Bookings
+                .Include(b => b.Room)
+                .ThenInclude(r => r.Category)
                 .Where(b => b.User.Id == userId)
                 .Select(b => b.Room)
-                //.Include(r => r.Category)
-                //.ThenInclude(c => c.Hotel)
-                .ToList();
+                .ToListAsync();
         }
 
-        public Room Get(Guid id)
+        public async Task<IEnumerable<Room>> GetAllFreeInHotelAsync(Guid hotelId)
         {
-            return Context.Rooms
+            return await Context.Rooms
+                .Include(r => r.Category)
+                .Where(r => r.Category.Hotel.Id == hotelId)
+                .Where(r => r.LastBooking == null || r.LastBooking.DateTo <= DateTime.Now)
+                .ToListAsync();
+        }
+
+        public async Task<Room> GetAsync(Guid id)
+        {
+            return await Context.Rooms
                 .Include(r => r.Category)
                 .Include(h => h.Category.Hotel)
-                .FirstOrDefault(r => r.Id == id);
+                .FirstOrDefaultAsync(r => r.Id == id);
         }
 
-        public void Create(Room room)
+        public async Task CreateAsync(Room room)
         {
             Context.Rooms.Add(room);
-            Context.SaveChanges();
+            await Context.SaveChangesAsync();
         }
 
-        public void Update(Room room)
+        public async Task UpdateAsync(Room room)
         {
-            Room currentRoom = Get(room.Id);
+            Room currentRoom = await GetAsync(room.Id);
 
             currentRoom.Category = room.Category;
             currentRoom.Picture = room.Picture;
 
             Context.Rooms.Update(currentRoom);
-            Context.SaveChanges();
+            await Context.SaveChangesAsync();
         }
 
-        public Room Delete(Guid id)
+        public async Task<Room> DeleteAsync(Guid id)
         {
-            Room room = Get(id);
+            Room room = await GetAsync(id);
 
             if (room != null) {
                 Context.Rooms.Remove(room);
-                Context.SaveChanges();
+                await Context.SaveChangesAsync();
             }
 
             return room;

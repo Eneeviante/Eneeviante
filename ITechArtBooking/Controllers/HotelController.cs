@@ -4,9 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-//using ITechArtBooking.Domain.Services;
 using ITechArtBooking.Domain.Models;
-//using ITechArtBooking.Infrastucture.Repositories.Fakes;
 using ITechArtBooking.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 
@@ -17,48 +15,25 @@ namespace ITechArtBooking.Controllers
     [ApiController]
     public class HotelController : ControllerBase
     {
-        //private readonly UserService postsService = new(new UsersFakeRepository());
-        private readonly IRepository<Hotel> hotelRepository;
+        private readonly IHotelRepository hotelRepository;
 
-        public HotelController(IRepository<Hotel> _hotelRepository)
+        public HotelController(IHotelRepository _hotelRepository)
         {
             hotelRepository = _hotelRepository;
         }
 
+        /*Просмотреть список всех отелей*/
+        [Authorize(Roles = "User")]
         [HttpGet(Name = "GetAllHotels")]
-        public IEnumerable<Hotel> GetAll()
+        public async Task<IEnumerable<Hotel>> GetAllAsync()
         {
-            return hotelRepository.GetAll();
+            return await hotelRepository.GetAllAsync();
         }
 
-        [HttpGet("{id}", Name = "GetHotel")]
-        public IActionResult Get(Guid id)
-        {
-            Hotel hotel = hotelRepository.Get(id);
-
-            if (hotel == null) {
-                return NotFound();
-            }
-            else {
-                return new ObjectResult(hotel);
-            }
-        }
-
-        //[HttpGet("{id}", Name = "GetHotel_AvailableRooms")]
-        //public IActionResult Get(Guid id)
-        //{
-        //    Hotel hotel = hotelRepository.Get(id);
-
-        //    if (hotel == null) {
-        //        return NotFound();
-        //    }
-        //    else {
-        //        return new ObjectResult(hotel);
-        //    }
-        //}
-
+        /*Добавить отель*/
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        public IActionResult Create(string name, string description, int starNumber)
+        public async Task<IActionResult> Create(string name, string description, int starNumber)
         {
             Hotel hotel = new Hotel { 
                 Id = new Guid(),
@@ -67,34 +42,16 @@ namespace ITechArtBooking.Controllers
                 StarNumber = starNumber
             };
 
-            hotelRepository.Create(hotel);
-            return CreatedAtRoute("GetHotel", new { id = hotel.Id }, hotel);
+            await hotelRepository.CreateAsync(hotel);
+            return CreatedAtRoute(new { id = hotel.Id }, hotel);
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Update(Guid id, string name, string description, int starNumber)
-        {
-            var oldHotel = hotelRepository.Get(id);
-            if (oldHotel == null) {
-                return NotFound();
-            }
-
-            var newHotel = new Hotel {
-                Id = id,
-                Name = name,
-                Description = description,
-                StarNumber = starNumber
-            };
-
-
-            hotelRepository.Update(newHotel);
-            return RedirectToRoute("GetAllHotels");
-        }
-
+        /*Удалить отель*/
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> DeleteAsync(Guid id)
         {
-            var deletedHotel = hotelRepository.Delete(id);
+            var deletedHotel = await hotelRepository.DeleteAsync(id);
 
             if (deletedHotel == null) {
                 return BadRequest();

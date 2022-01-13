@@ -9,10 +9,10 @@ namespace ITechArtBooking.Domain.Interfaces
 {
     public interface IReviewRepository
     {
-        IEnumerable<Review> GetAll(Guid hotelId);
-        Review Get(Guid id);
-        void Create(Review review);
-        void Update(Review review);
-        Review Delete(Guid id);
+        Task<IEnumerable<Review>> GetAllAsync(Guid hotelId);
+        Task<Review> GetAsync(Guid id);
+        Task CreateAsync(Review review);
+        Task UpdateAsync(Review review);
+        Task<Review> DeleteAsync(Guid id);
     }
 }

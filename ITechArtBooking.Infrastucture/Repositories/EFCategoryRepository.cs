@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ITechArtBooking.Infrastucture.Repositories
 {
-    public class EFCategoryRepository : IRepository<Category>
+    public class EFCategoryRepository : ICategoryRepository
     {
         private readonly EFBookingDBContext Context;
 
@@ -18,46 +18,33 @@ namespace ITechArtBooking.Infrastucture.Repositories
             Context = context;
         }
 
-        public IEnumerable<Category> GetAll()
+        public async Task<IEnumerable<Category>> GetAllAsync(Guid hotelId)
         {
-            return Context.Categories
-                .Include(c => c.Hotel)
-                .ToList();
+            return await Context.Categories
+                .Where(c => c.Hotel.Id == hotelId)
+                .ToListAsync();
         }
 
-        public Category Get(Guid id)
+        public async Task<Category> GetAsync(Guid id)
         {
-            return Context.Categories
+            return await Context.Categories
                 .Include(c => c.Hotel)
-                .FirstOrDefault(c => c.Id == id);
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public void Create(Category category)
+        public async Task CreateAsync(Category category)
         {
             Context.Categories.Add(category);
-            Context.SaveChanges();
+            await Context.SaveChangesAsync();
         }
 
-        public void Update(Category category)
+        public async Task<Category> DeleteAsync(Guid id)
         {
-            Category currentCategory = Get(category.Id);
-
-            currentCategory.Hotel = category.Hotel;
-            currentCategory.BedsNumber = category.BedsNumber;
-            currentCategory.Description = category.Description;
-            currentCategory.CostPerDay = category.CostPerDay;
-            
-            Context.Categories.Update(currentCategory);
-            Context.SaveChanges();
-        }
-
-        public Category Delete(Guid id)
-        {
-            Category category = Get(id);
+            Category category = await GetAsync(id);
 
             if (category != null) {
                 Context.Categories.Remove(category);
-                Context.SaveChanges();
+                await Context.SaveChangesAsync();
             }
 
             return category;

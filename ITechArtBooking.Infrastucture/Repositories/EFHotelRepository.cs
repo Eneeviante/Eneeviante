@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ITechArtBooking.Infrastucture.Repositories
 {
-    public class EFHotelRepository : IRepository<Hotel>
+    public class EFHotelRepository : IHotelRepository
     {
         private readonly EFBookingDBContext Context;
 
@@ -18,28 +18,27 @@ namespace ITechArtBooking.Infrastucture.Repositories
             Context = context;
         }
 
-        public IEnumerable<Hotel> GetAll()
+        public async Task<IEnumerable<Hotel>> GetAllAsync()
         {
             return Context.Hotels;
         }
 
-        public Hotel Get(Guid id)
+        public async Task<Hotel> GetAsync(Guid id)
         {
-            return Context.Hotels
-                .Include(h => h.Rooms
-                    .Where(r => r.LastBooking == null || r.LastBooking.DateTo <= DateTime.Now))
-                .FirstOrDefault(h => h.Id == id);
+            return await Context.Hotels
+                .Include(h => h.Rooms)
+                .FirstOrDefaultAsync(h => h.Id == id);
         }
 
-        public void Create(Hotel hotel)
+        public async Task CreateAsync(Hotel hotel)
         {
             Context.Hotels.Add(hotel);
-            Context.SaveChanges();
+            await Context.SaveChangesAsync();
         }
 
-        public void Update(Hotel newHotel)
+        public async Task UpdateAsync(Hotel newHotel)
         {
-            Hotel currentHotel = Get(newHotel.Id);
+            Hotel currentHotel = await GetAsync(newHotel.Id);
 
             currentHotel.Name = newHotel.Name;
             currentHotel.Description = newHotel.Description;
@@ -47,16 +46,16 @@ namespace ITechArtBooking.Infrastucture.Repositories
             currentHotel.Rooms = newHotel.Rooms;
             
             Context.Hotels.Update(currentHotel);
-            Context.SaveChanges();
+            await Context.SaveChangesAsync();
         }
 
-        public Hotel Delete(Guid id)
+        public async Task<Hotel> DeleteAsync(Guid id)
         {
-            Hotel hotel = Get(id);
+            Hotel hotel = await GetAsync(id);
 
             if (hotel != null) {
                 Context.Hotels.Remove(hotel);
-                Context.SaveChanges();
+                await Context.SaveChangesAsync();
             }
 
             return hotel;

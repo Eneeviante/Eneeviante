@@ -40,6 +40,8 @@ namespace ITechArtBooking.Controllers
             if (!result.Succeeded) {
                 return BadRequest(result.Errors);
             }
+            await _userManager.AddToRoleAsync(user, "User");
+
             return Ok(user);
         }
 
@@ -68,7 +70,7 @@ namespace ITechArtBooking.Controllers
             var token = new JwtSecurityToken(
                 issuer: "test",
                 audience: "test",
-                expires: DateTime.Now.AddHours(2),
+                expires: DateTime.Now.AddHours(1),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey,
                         SecurityAlgorithms.HmacSha256)
@@ -81,18 +83,6 @@ namespace ITechArtBooking.Controllers
             };
 
             return Ok(result);
-        }
-
-        [Authorize]
-        [HttpGet("/test")]
-        public ActionResult Test()
-        {
-            User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-            return Ok(User.Claims
-                .Select(c => new {
-                    c.Type,
-                    c.Value
-                }));
         }
     }
 }

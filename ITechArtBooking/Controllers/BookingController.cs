@@ -8,6 +8,8 @@ using ITechArtBooking.Domain.Models;
 //using ITechArtBooking.Infrastucture.Repositories.Fakes;
 using ITechArtBooking.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using ITechArtBooking.Helper;
 
 namespace ITechArtBooking.Controllers
 {
@@ -16,11 +18,11 @@ namespace ITechArtBooking.Controllers
     [ApiController]
     public class BookingController : ControllerBase
     {
-        private readonly IRepository<Booking> bookingRepository;
+        private readonly IBookingRepository bookingRepository;
         private readonly IUserRepository userRepository;
         private readonly IRoomRepository roomRepository;
 
-        public BookingController(IRepository<Booking> _bookingRepository,
+        public BookingController(IBookingRepository _bookingRepository,
             IUserRepository _userRepository, IRoomRepository _roomRepository)
         {
             bookingRepository = _bookingRepository;
@@ -28,34 +30,32 @@ namespace ITechArtBooking.Controllers
             roomRepository = _roomRepository;
         }
 
-        [HttpGet(Name = "GetAllBookings")]
-        public IEnumerable<Booking> GetAll()
+        /*Просмотреть информацию о бронировании номеров в отелях*/
+        [Authorize(Roles = "Admin")]
+        [HttpGet(Name = "GetBookings")]
+        public async Task<IActionResult> GetAllAsync()
         {
-            return bookingRepository.GetAll();
-        }
+            var bookings = await bookingRepository.GetAllAsync();
 
-        [HttpGet("{id}", Name = "GetBooking")]
-        public IActionResult Get(Guid id)
-        {
-            Booking booking = bookingRepository.Get(id);
-
-            if (booking == null) {
+            if (bookings == null) {
                 return NotFound();
             }
             else {
-                return new ObjectResult(booking);
+                return new ObjectResult(bookings);
             }
         }
 
+        /*Бронировать номер в отеле на определенный срок*/
+        [Authorize(Roles = "User")]
         [HttpPost]
-        public IActionResult Create(string dateFrom, string dateTo,
-            Guid userId, Guid roomId)
+        public async Task<IActionResult> CreateAsync(string dateFrom, string dateTo, Guid roomId)
         {
-            var user = userRepository.Get(userId);
+            var userId = User.GetUserId();
+            var user = await userRepository.GetAsync(userId);
             if (user == null) {
                 return BadRequest();
             }
-            var room = roomRepository.Get(roomId);
+            var room = await roomRepository.GetAsync(roomId);
             if (room == null) {
                 return BadRequest();
             }
@@ -77,49 +77,25 @@ namespace ITechArtBooking.Controllers
                 };
 
                 room.LastBooking = newBooking;
-                bookingRepository.Create(newBooking);
-                return CreatedAtRoute("GetBooking", new { id = newBooking.Id }, newBooking);
+                await bookingRepository.CreateAsync(newBooking);
+                return CreatedAtRoute(new { id = newBooking.Id }, newBooking);
             }
             catch(InvalidCastException e) {
-                return BadRequest();
+                return BadRequest(e);
             }
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Update(Guid id, string dateFrom, string dateTo,
-            Guid userId, Guid roomId)
-        {
-            var newUser = userRepository.Get(userId);
-            if (newUser == null) {
-                return BadRequest();
-            }
-
-            var newRoom = roomRepository.Get(roomId);
-            if (newRoom == null) {
-                return BadRequest();
-            }
-
-            var oldBooking= bookingRepository.Get(id);
-            if (oldBooking == null) {
-                return NotFound("OldBooking not found");
-            }
-
-            Booking newBooking = new Booking {
-                Id = id,
-                DateFrom = DateTime.Parse(dateFrom),
-                DateTo = DateTime.Parse(dateTo),
-                User = newUser,
-                Room = newRoom
-            };
-
-            bookingRepository.Update(newBooking);
-            return RedirectToRoute("GetAllBookings");
-        }
-
+        /*Отменять бронирование номер не позднее, чем за 5 дней*/
+        [Authorize(Roles = "User")]
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> DeleteAsync(Guid id)
         {
-            var deletedBooking = bookingRepository.Delete(id);
+            var booking = await bookingRepository.GetAsync(id);
+            if((booking.DateFrom - DateTime.Now).TotalDays < 5) {
+                return BadRequest("Unable to delete, less than 5 days left");
+            }
+
+            var deletedBooking = await bookingRepository.DeleteAsync(id);
 
             if (deletedBooking == null) {
                 return BadRequest();

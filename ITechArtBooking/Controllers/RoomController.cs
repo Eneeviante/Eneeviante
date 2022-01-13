@@ -8,6 +8,7 @@ using ITechArtBooking.Domain.Models;
 //using ITechArtBooking.Infrastucture.Repositories.Fakes;
 using ITechArtBooking.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using ITechArtBooking.Helper;
 
 namespace ITechArtBooking.Controllers
 {
@@ -18,44 +19,53 @@ namespace ITechArtBooking.Controllers
     {
         //private readonly UserService postsService = new(new UsersFakeRepository());
         private readonly IRoomRepository roomRepository;
-        private readonly IRepository<Category> categoryRepository;
-        private readonly IRepository<Hotel> hotelRepository;
+        private readonly ICategoryRepository categoryRepository;
+        private readonly IHotelRepository hotelRepository;
 
         public RoomController(IRoomRepository _roomRepository,
-            IRepository<Category> _categoryRepository, IRepository<Hotel> _hotelRepository)
+            ICategoryRepository _categoryRepository, IHotelRepository _hotelRepository)
         {
             categoryRepository = _categoryRepository;
             roomRepository = _roomRepository;
             hotelRepository = _hotelRepository;
         }
 
-        [HttpGet(Name = "GetAllRooms")]
-        public IEnumerable<Room> GetAll(Guid userId)
+        /*Просматривать информацию о своих забронированных номерах*/
+        [Authorize(Roles = "User")]
+        [HttpGet(Name = "GetAllRoomsByUser")]
+        public async Task<IEnumerable<Room>> GetAllAsync()
         {
-            return roomRepository.GetAll(userId);
+            var userId = this.User.GetUserId();
+            return await roomRepository.GetAllByUserAsync(userId);
         }
 
-        [HttpGet("{id}", Name = "GetRoom")]
-        public IActionResult Get(Guid id)
+        /*Просматривать список свободных номеров в отеле*/
+        [HttpGet("{id}", Name = "GetFreeRoomInHotel")]
+        public async Task<IActionResult> GetAllFreeInHotelAsync(Guid id)
         {
-            Room room = roomRepository.Get(id);
+            var rooms = await roomRepository.GetAllFreeInHotelAsync(id);
 
-            if (room == null) {
+            if (rooms == null) {
                 return NotFound();
             }
             else {
-                return new ObjectResult(room);
+                return new ObjectResult(rooms);
             }
         }
 
+        /*Добавить номер в отель*/
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        public IActionResult Create(Guid categoryId, short number, string picture)
+        public async Task<IActionResult> CreateAsync(Guid categoryId, short number, string picture)
         {
-            var category = categoryRepository.Get(categoryId);
+            var category = await categoryRepository.GetAsync(categoryId);
             if (category == null) {
                 return NotFound();
             }
-            var hotel = hotelRepository.Get(category.Hotel.Id);
+            var hotel = await hotelRepository.GetAsync(category.Hotel.Id);
+            if(hotel == null) {
+                return NotFound();
+            }
 
             Room newRoom = new Room {
                 Id = new Guid(),
@@ -66,39 +76,17 @@ namespace ITechArtBooking.Controllers
 
             hotel.Rooms.Add(newRoom);
 
-            roomRepository.Create(newRoom);
+            await roomRepository.CreateAsync(newRoom);
 
-            return CreatedAtRoute("GetRoom", new { id = newRoom.Id }, newRoom);
+            return CreatedAtRoute(new { id = newRoom.Id }, newRoom);
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Update(Guid id, short number, Guid categoryId, string picture)
-        {
-            var oldRoom = roomRepository.Get(id);
-            if (oldRoom == null) {
-                return BadRequest();
-            }
-
-            var newCategory = categoryRepository.Get(categoryId);
-            if (newCategory == null) {
-                return NotFound();
-            }
-
-            var newRoom = new Room {
-                Id = id,
-                Number = number,
-                Category = newCategory,
-                Picture = picture
-            };
-
-            roomRepository.Update(newRoom);
-            return RedirectToRoute("GetAllRooms");
-        }
-
+        /*Удалить номер из отеля*/
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> DeleteAsync(Guid id)
         {
-            var deletedRoom = roomRepository.Delete(id);
+            var deletedRoom = await roomRepository.DeleteAsync(id);
 
             if (deletedRoom == null) {
                 return BadRequest();

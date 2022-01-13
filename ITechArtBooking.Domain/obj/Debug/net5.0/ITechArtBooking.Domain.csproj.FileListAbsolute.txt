@@ -9,3 +9,4 @@ D:\Kurs\ITechArtBooking\ITechArtBooking.Domain\obj\Debug\net5.0\ITechArtBooking.
 D:\Kurs\ITechArtBooking\ITechArtBooking.Domain\obj\Debug\net5.0\ITechArtBooking.Domain.dll
 D:\Kurs\ITechArtBooking\ITechArtBooking.Domain\obj\Debug\net5.0\ref\ITechArtBooking.Domain.dll
 D:\Kurs\ITechArtBooking\ITechArtBooking.Domain\obj\Debug\net5.0\ITechArtBooking.Domain.pdb
+D:\Kurs\ITechArtBooking\ITechArtBooking.Domain\obj\Debug\net5.0\ITechArtBooking.Domain.csproj.AssemblyReference.cache
