@@ -8,6 +8,7 @@ using ITechArtBooking.Domain.Models;
 //using ITechArtBooking.Infrastucture.Repositories.Fakes;
 using ITechArtBooking.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using ITechArtBooking.Domain.Services.ServiceInterfaces;
 
 namespace ITechArtBooking.Controllers
 {
@@ -16,54 +17,41 @@ namespace ITechArtBooking.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        //private readonly UserService postsService = new(new UsersFakeRepository());
-        private readonly ICategoryRepository categoryRepository;
-        private readonly IHotelRepository hotelRepository;
+        private readonly ICategoryService categoryService;
 
-        public CategoryController(ICategoryRepository _categoryRepository,
-            IHotelRepository _hotelRepository)
+        public CategoryController(ICategoryService _categoryService)
         {
-            categoryRepository = _categoryRepository;
-            hotelRepository = _hotelRepository;
+            categoryService = _categoryService;
         }
 
         [Authorize(Roles = "User")]
-        [HttpGet(Name = "GetAllCategoriesFromHotel")]
-        public async Task<IEnumerable<Category>> GetAllAsync(Guid id)
+        [HttpGet("{hotelId}")]
+        public async Task<IEnumerable<Category>> GetAllAsync(Guid hotelId)
         {
-            return await categoryRepository.GetAllAsync(id);
+            return await categoryService.GetAllAsync(hotelId);
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPost]
+        [HttpPost("{hotelId}, {bedsNumber}, {description}, {costPerDay}")]
         public async Task<IActionResult> CreateAsync(Guid hotelId, int bedsNumber,
             string description, float costPerDay)
         {
-            var hotel = await hotelRepository.GetAsync(hotelId);
-            if (hotel == null) {
-                return BadRequest();
+            var newCategory = await categoryService.CreateAsync(hotelId, bedsNumber,
+                description, costPerDay);
+            if(newCategory == null) {
+                return BadRequest("Invalid hotel id");
             }
-
-            Category newCategory = new Category {
-                Id = new Guid(),
-                Hotel = hotel,
-                BedsNumber = bedsNumber,
-                CostPerDay = costPerDay,
-                Description = description
-            };
-
-            await categoryRepository.CreateAsync(newCategory);
-            return CreatedAtRoute("GetCategory", new { id = newCategory.Id }, newCategory);
+            return CreatedAtRoute(new { id = newCategory.Id }, newCategory);
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(Guid id)
+        [HttpDelete("{categoryId}")]
+        public async Task<IActionResult> DeleteAsync(Guid categoryId)
         {
-            var deletedCategory = await categoryRepository.DeleteAsync(id);
+            var deletedCategory = await categoryService.DeleteAsync(categoryId);
 
             if (deletedCategory == null) {
-                return BadRequest();
+                return BadRequest("Invalid category id");
             }
 
             return new ObjectResult(deletedCategory);

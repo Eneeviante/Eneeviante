@@ -14,6 +14,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using ITechArtBooking.Infrastucture.Repositories.Fakes;
+using ITechArtBooking.Domain.Services;
+using ITechArtBooking.Domain.Services.ServiceInterfaces;
 
 namespace ITechArtBooking
 {
@@ -28,7 +30,7 @@ namespace ITechArtBooking
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {//=)
+        {
             services.AddControllers();
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ITechArtBooking", Version = "v1" });
@@ -65,7 +67,14 @@ namespace ITechArtBooking
                 options.UseSqlServer(connection);
             });
 
-            services.AddTransient<IUserRepository, EFUserRepository>();          //defines a service that creates a new instance
+            services.AddTransient<IBookingService, BookingService>();
+            services.AddTransient<ICategoryService, CategoryService>();
+            services.AddTransient<IHotelService, HotelService>();
+            services.AddTransient<IReviewService, ReviewService>();
+            services.AddTransient<IRoomService, RoomService>();
+            services.AddTransient<IAccountService, AccountService>();
+
+            //services.AddTransient<IUserRepository, EFUserRepository>();          //defines a service that creates a new instance
             services.AddTransient<IHotelRepository, EFHotelRepository>();            //of the EFUserRepository class
             services.AddTransient<ICategoryRepository, EFCategoryRepository>();      //every time an instance of the IUserRepository type is required
             services.AddTransient<IReviewRepository, EFReviewRepository>();

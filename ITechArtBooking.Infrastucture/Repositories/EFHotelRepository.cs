@@ -20,7 +20,8 @@ namespace ITechArtBooking.Infrastucture.Repositories
 
         public async Task<IEnumerable<Hotel>> GetAllAsync()
         {
-            return Context.Hotels;
+            return await Context.Hotels
+                .ToListAsync();
         }
 
         public async Task<Hotel> GetAsync(Guid id)

@@ -1,12 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using ITechArtBooking.Domain.Models;
-using ITechArtBooking.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using ITechArtBooking.Domain.Services.ServiceInterfaces;
 
 namespace ITechArtBooking.Controllers
 {
@@ -15,46 +13,39 @@ namespace ITechArtBooking.Controllers
     [ApiController]
     public class HotelController : ControllerBase
     {
-        private readonly IHotelRepository hotelRepository;
+        private readonly IHotelService hotelService;
 
-        public HotelController(IHotelRepository _hotelRepository)
+        public HotelController(IHotelService _hotelService)
         {
-            hotelRepository = _hotelRepository;
+            hotelService = _hotelService;
         }
 
         /*Просмотреть список всех отелей*/
         [Authorize(Roles = "User")]
-        [HttpGet(Name = "GetAllHotels")]
+        [HttpGet]
         public async Task<IEnumerable<Hotel>> GetAllAsync()
         {
-            return await hotelRepository.GetAllAsync();
+            return await hotelService.GetAllAsync();
         }
 
         /*Добавить отель*/
         [Authorize(Roles = "Admin")]
-        [HttpPost]
-        public async Task<IActionResult> Create(string name, string description, int starNumber)
+        [HttpPost("{name}, {description}, {starNumber}")]
+        public async Task<IActionResult> CreateAsync(string name, string description, int starNumber)
         {
-            Hotel hotel = new Hotel { 
-                Id = new Guid(),
-                Name = name,
-                Description = description,
-                StarNumber = starNumber
-            };
-
-            await hotelRepository.CreateAsync(hotel);
-            return CreatedAtRoute(new { id = hotel.Id }, hotel);
+            var newHotel = await hotelService.CreateAsync(name, description, starNumber);
+            return CreatedAtRoute(new { id = newHotel.Id }, newHotel);
         }
 
         /*Удалить отель*/
         [Authorize(Roles = "Admin")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(Guid id)
+        [HttpDelete("{hotelId}")]
+        public async Task<IActionResult> DeleteAsync(Guid hotelId)
         {
-            var deletedHotel = await hotelRepository.DeleteAsync(id);
+            var deletedHotel = await hotelService.DeleteAsync(hotelId);
 
             if (deletedHotel == null) {
-                return BadRequest();
+                return BadRequest("Invalid hotel id");
             }
 
             return new ObjectResult(deletedHotel);

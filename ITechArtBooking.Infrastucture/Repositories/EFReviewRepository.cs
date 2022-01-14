@@ -41,18 +41,6 @@ namespace ITechArtBooking.Infrastucture.Repositories
             await Context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(Review review)
-        {
-            Review currentReview = await GetAsync(review.Id);
-
-            currentReview.User = review.User;
-            currentReview.Hotel = review.Hotel;
-            currentReview.Text = review.Text;
-
-            Context.Reviews.Update(currentReview);
-            await Context.SaveChangesAsync();
-        }
-
         public async Task<Review> DeleteAsync(Guid id)
         {
             Review review = await GetAsync(id);

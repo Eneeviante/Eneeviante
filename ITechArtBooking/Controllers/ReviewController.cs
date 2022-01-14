@@ -8,6 +8,7 @@ using ITechArtBooking.Domain.Models;
 using ITechArtBooking.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using ITechArtBooking.Helper;
+using ITechArtBooking.Domain.Services.ServiceInterfaces;
 
 namespace ITechArtBooking.Controllers
 {
@@ -16,62 +17,34 @@ namespace ITechArtBooking.Controllers
     [ApiController]
     public class ReviewController : ControllerBase
     {
-        //private readonly UserService postsService = new(new UsersFakeRepository());
-        private readonly IReviewRepository reviewRepository;
-        private readonly IHotelRepository hotelRepository;
-        private readonly IUserRepository userRepository;
+        private readonly IReviewService reviewService;
 
-        public ReviewController(IReviewRepository _reviewRepository,
-            IHotelRepository _hotelRepository, IUserRepository _userRepository)
+        public ReviewController(IReviewService _reviewService)
         {
-            reviewRepository = _reviewRepository;
-            hotelRepository = _hotelRepository;
-            userRepository = _userRepository;
+            reviewService = _reviewService;
         }
 
+        /*Посмтреть все отзывы об отеле*/
         [Authorize(Roles = "User")]
-        [HttpGet(Name = "GetAllReviewsAboutHotel")]
+        [HttpGet("{hotelId}")]
         public async Task<IEnumerable<Review>> GetAllAsync(Guid hotelId)
         {
-            return await reviewRepository.GetAllAsync(hotelId);
-        }
-
-        [HttpGet("{id}", Name = "GetReview")]
-        public async Task<IActionResult> GetAsync(Guid id)
-        {
-            Review review = await reviewRepository.GetAsync(id);
-
-            if (review == null) {
-                return NotFound();
-            }
-            else {
-                return new ObjectResult(review);
-            }
+            return await reviewService.GetAllAsync(hotelId);
         }
 
         /*Оставлять отзыв о конкретном отеле*/
         [Authorize(Roles = "User")]
-        [HttpPost]
+        [HttpPost("{hotelId}, {text}")]
         public async Task<IActionResult> CreateAsync(Guid hotelId, string text)
         {
-            var userId = this.User.GetUserId();
+            var userId = User.GetUserId();
 
-            var user = await userRepository.GetAsync(userId);
-            var hotel = await hotelRepository.GetAsync(hotelId);
-
-            if (user == null || hotel == null) {
-                return BadRequest();
+            var newReview = await reviewService.CreateAsync(userId, hotelId, text);
+            if (newReview == null) {
+                return BadRequest("Invalid hotel id");
             }
 
-            Review review = new Review {
-                Id = new Guid(),
-                Hotel = hotel,
-                User = user,
-                Text = text
-            };
-
-            await reviewRepository.CreateAsync(review);
-            return CreatedAtRoute("GetReview", new { id = review.Id }, review);
+            return CreatedAtRoute(new { id = newReview.Id }, newReview);
         }
     }
 }

@@ -5,13 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using ITechArtBooking.Domain.Models;
 
-namespace ITechArtBooking.Domain.Interfaces
+namespace ITechArtBooking.Domain.Services.ServiceInterfaces
 {
-    public interface IReviewRepository
+    public interface IReviewService
     {
         Task<IEnumerable<Review>> GetAllAsync(Guid hotelId);
-        Task<Review> GetAsync(Guid id);
-        Task CreateAsync(Review review);
-        Task<Review> DeleteAsync(Guid id);
+        Task<Review> CreateAsync(Guid userId, Guid hotelId, string text);
     }
 }

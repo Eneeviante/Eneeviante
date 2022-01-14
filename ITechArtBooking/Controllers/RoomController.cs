@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-//using ITechArtBooking.Domain.Services;
 using ITechArtBooking.Domain.Models;
-//using ITechArtBooking.Infrastucture.Repositories.Fakes;
-using ITechArtBooking.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using ITechArtBooking.Helper;
+using ITechArtBooking.Domain.Services.ServiceInterfaces;
+using System.Text.RegularExpressions;
 
 namespace ITechArtBooking.Controllers
 {
@@ -17,79 +15,60 @@ namespace ITechArtBooking.Controllers
     [ApiController]
     public class RoomController : ControllerBase
     {
-        //private readonly UserService postsService = new(new UsersFakeRepository());
-        private readonly IRoomRepository roomRepository;
-        private readonly ICategoryRepository categoryRepository;
-        private readonly IHotelRepository hotelRepository;
+        private readonly IRoomService roomService;
 
-        public RoomController(IRoomRepository _roomRepository,
-            ICategoryRepository _categoryRepository, IHotelRepository _hotelRepository)
+        public RoomController(IRoomService _roomService)
         {
-            categoryRepository = _categoryRepository;
-            roomRepository = _roomRepository;
-            hotelRepository = _hotelRepository;
+            roomService = _roomService;
         }
 
         /*Просматривать информацию о своих забронированных номерах*/
         [Authorize(Roles = "User")]
-        [HttpGet(Name = "GetAllRoomsByUser")]
-        public async Task<IEnumerable<Room>> GetAllAsync()
+        [HttpGet]
+        public async Task<IEnumerable<Room>> GetAllByUserAsync()
         {
-            var userId = this.User.GetUserId();
-            return await roomRepository.GetAllByUserAsync(userId);
+            var userId = User.GetUserId();
+            return await roomService.GetAllByUserAsync(userId);
         }
 
         /*Просматривать список свободных номеров в отеле*/
-        [HttpGet("{id}", Name = "GetFreeRoomInHotel")]
-        public async Task<IActionResult> GetAllFreeInHotelAsync(Guid id)
+        [HttpGet("{hotelId}")]
+        public async Task<IActionResult> GetAllFreeInHotelAsync(Guid hotelId)
         {
-            var rooms = await roomRepository.GetAllFreeInHotelAsync(id);
+            var rooms = await roomService.GetAllFreeInHotelAsync(hotelId);
 
             if (rooms == null) {
-                return NotFound();
+                return BadRequest("Invalid hotel id");
             }
-            else {
-                return new ObjectResult(rooms);
-            }
+
+            return new ObjectResult(rooms);
         }
 
         /*Добавить номер в отель*/
         [Authorize(Roles = "Admin")]
-        [HttpPost]
+        [HttpPost("{categoryId}, {number}, {picture}")]
         public async Task<IActionResult> CreateAsync(Guid categoryId, short number, string picture)
         {
-            var category = await categoryRepository.GetAsync(categoryId);
-            if (category == null) {
-                return NotFound();
-            }
-            var hotel = await hotelRepository.GetAsync(category.Hotel.Id);
-            if(hotel == null) {
-                return NotFound();
+            if (!Regex.IsMatch(picture, @"^(?:[a-zA-Z]\:|\\\\[\w\.]+\\[\w.$]+)\\(?:[\w]+\\)*\w([\w.])+$")) {
+                return BadRequest("Invalid path to the picture");
             }
 
-            Room newRoom = new Room {
-                Id = new Guid(),
-                Number = number,
-                Category = category,
-                Picture = picture
-            };
-
-            hotel.Rooms.Add(newRoom);
-
-            await roomRepository.CreateAsync(newRoom);
-
+            var newRoom = await roomService.CreateAsync(categoryId, number, picture);
+            if(newRoom == null) {
+                return BadRequest("Invalid category id");
+            }
             return CreatedAtRoute(new { id = newRoom.Id }, newRoom);
         }
 
         /*Удалить номер из отеля*/
         [Authorize(Roles = "Admin")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(Guid id)
+        [HttpDelete("{roomId}")]
+        public async Task<IActionResult> DeleteAsync(Guid roomId)
         {
-            var deletedRoom = await roomRepository.DeleteAsync(id);
+            var deletedRoom = await roomService.DeleteAsync(roomId);
 
             if (deletedRoom == null) {
-                return BadRequest();
+                return BadRequest("Invalid room id");
             }
 
             return new ObjectResult(deletedRoom);
