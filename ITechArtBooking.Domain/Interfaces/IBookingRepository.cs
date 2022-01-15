@@ -9,7 +9,7 @@ namespace ITechArtBooking.Domain.Interfaces
 {
     public interface IBookingRepository
     {
-        Task<IEnumerable<Booking>> GetAllAsync();
+        Task<IEnumerable<Booking>> GetAllAsync(int pageSize, int pageNumber);
         Task<Booking> GetAsync(Guid id);
         Task CreateAsync(Booking booking);
         Task<Booking> DeleteAsync(Guid id);

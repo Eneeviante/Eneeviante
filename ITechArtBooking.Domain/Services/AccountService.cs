@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ITechArtBooking.Domain.Interfaces;
 using ITechArtBooking.Domain.Models;
+using ITechArtBooking.Domain.Models.Pagination;
 using ITechArtBooking.Domain.Services.ServiceInterfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -81,9 +82,17 @@ namespace ITechArtBooking.Domain.Services
             return result;
         }
 
-        public async Task<IEnumerable<User>> GetAllAsync()
+        public async Task<IEnumerable<User>> GetAllAsync(int pageSize, int pageNumber)
         {
-            return _userManager.Users.ToList();
+            var users = _userManager.Users.ToList();
+
+            PageModel<User> pageModel = new PageModel<User>(users, pageNumber, pageSize);
+            
+            if (!pageModel.IsCorrectPage()) {
+                return null;
+            }
+
+            return pageModel.ItemsOnPage();
         }
 
         public async Task<User> DeleteAsync(Guid userId)

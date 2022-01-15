@@ -24,9 +24,9 @@ namespace ITechArtBooking.Domain.Services
             roomRepository = _roomRepository;
         }
 
-        public async Task<IEnumerable<Booking>> GetAllAsync()
+        public async Task<IEnumerable<Booking>> GetAllAsync(int pageSize, int pageNumber)
         {
-            return await bookingRepository.GetAllAsync();
+            return await bookingRepository.GetAllAsync(pageSize, pageNumber);
         }
 
         public async Task<Booking> CreateAsync(Guid userId, DateTime dateFrom,

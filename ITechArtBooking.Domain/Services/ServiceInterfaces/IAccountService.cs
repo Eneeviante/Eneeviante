@@ -12,7 +12,7 @@ namespace ITechArtBooking.Domain.Services.ServiceInterfaces
         Task<User> Register(string email, string firstName,
             string middleName, string lastName, string password);
         Task<dynamic> Login(string email, string password);
-        Task<IEnumerable<User>> GetAllAsync();
+        Task<IEnumerable<User>> GetAllAsync(int pageSize, int pageNumber);
         Task<User> DeleteAsync(Guid userId);
     }
 }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ITechArtBooking.Domain.Interfaces;
 using ITechArtBooking.Domain.Models;
+using ITechArtBooking.Domain.Models.Pagination;
 using Microsoft.EntityFrameworkCore;
 
 namespace ITechArtBooking.Infrastucture.Repositories
@@ -18,10 +19,14 @@ namespace ITechArtBooking.Infrastucture.Repositories
             Context = context;
         }
 
-        public async Task<IEnumerable<Hotel>> GetAllAsync()
+        public async Task<IEnumerable<Hotel>> GetAllAsync(int pageSize, int pageNumber)
         {
-            return await Context.Hotels
-                .ToListAsync();
+            var hotels = Context.Hotels.ToList();
+            PageModel<Hotel> pageModel = new PageModel<Hotel>(hotels, pageNumber, pageSize);
+            if (!pageModel.IsCorrectPage()) {
+                return null;
+            }
+            return pageModel.ItemsOnPage();
         }
 
         public async Task<Hotel> GetAsync(Guid id)

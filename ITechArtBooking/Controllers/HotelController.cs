@@ -23,9 +23,13 @@ namespace ITechArtBooking.Controllers
         /*Просмотреть список всех отелей*/
         [Authorize(Roles = "User")]
         [HttpGet]
-        public async Task<IEnumerable<Hotel>> GetAllAsync()
+        public async Task<ActionResult> GetAllAsync(int pageSize = 2, int pageNumber = 1)
         {
-            return await hotelService.GetAllAsync();
+            var hotels = await hotelService.GetAllAsync(pageSize, pageNumber);
+            if(hotels == null) {
+                return BadRequest("Invalid page number");
+            }
+            return new ObjectResult(hotels);
         }
 
         /*Добавить отель*/

@@ -33,12 +33,12 @@ namespace ITechArtBooking.Controllers
 
         /*Просматривать список свободных номеров в отеле*/
         [HttpGet("{hotelId}")]
-        public async Task<IActionResult> GetAllFreeInHotelAsync(Guid hotelId)
+        public async Task<IActionResult> GetAllFreeInHotelAsync(Guid hotelId, int pageSize = 2, int pageNumber = 1)
         {
-            var rooms = await roomService.GetAllFreeInHotelAsync(hotelId);
+            var rooms = await roomService.GetAllFreeInHotelAsync(hotelId, pageSize, pageNumber);
 
             if (rooms == null) {
-                return BadRequest("Invalid hotel id");
+                return BadRequest("Invalid hotel id or page number");
             }
 
             return new ObjectResult(rooms);

@@ -8,7 +8,7 @@ namespace ITechArtBooking.Domain.Services.ServiceInterfaces
 {
     public interface IBookingService
     {
-        Task<IEnumerable<Booking>> GetAllAsync();
+        Task<IEnumerable<Booking>> GetAllAsync(int pageSize, int pageNumber);
         Task<Booking> CreateAsync(Guid userId, DateTime dateFrom,
             DateTime dateTo, Guid roomId);
         Task<Booking> DeleteAsync(Guid id);

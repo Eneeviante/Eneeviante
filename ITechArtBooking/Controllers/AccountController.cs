@@ -1,19 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using ITechArtBooking.Domain.Models;
 using ITechArtBooking.Domain.Services.ServiceInterfaces;
 using ITechArtBooking.Helper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 namespace ITechArtBooking.Controllers
 {
@@ -62,9 +53,15 @@ namespace ITechArtBooking.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        public async Task<ActionResult> GetAllAsync()
+        public async Task<ActionResult> GetAllAsync(int pageSize = 2, int pageNumber = 1)
         {
-            return new ObjectResult(accountService.GetAllAsync());
+            var users = await accountService.GetAllAsync(pageSize, pageNumber);
+
+            if(users == null) {
+                return BadRequest("Invalid page number");
+            }
+
+            return new ObjectResult(users);
         }
 
         [Authorize(Roles = "User")]

@@ -9,7 +9,7 @@ namespace ITechArtBooking.Domain.Interfaces
 {
     public interface IHotelRepository
     {
-        Task<IEnumerable<Hotel>> GetAllAsync();
+        Task<IEnumerable<Hotel>> GetAllAsync(int pageSize, int pageNumber);
         Task<Hotel> GetAsync(Guid id);
         Task CreateAsync(Hotel hotel);
         Task UpdateAsync(Hotel room);

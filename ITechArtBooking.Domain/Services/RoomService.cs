@@ -29,14 +29,14 @@ namespace ITechArtBooking.Domain.Services
             return await roomRepository.GetAllByUserAsync(userId);
         }
 
-        public async Task<IEnumerable<Room>> GetAllFreeInHotelAsync(Guid hotelId)
+        public async Task<IEnumerable<Room>> GetAllFreeInHotelAsync(Guid hotelId, int pageSize, int pageNumber)
         {
             var hotel = await hotelRepository.GetAsync(hotelId);
             if(hotel == null) {
                 return null;
             }
 
-            return await roomRepository.GetAllFreeInHotelAsync(hotelId);
+            return await roomRepository.GetAllFreeInHotelAsync(hotelId, pageSize, pageNumber);
         }
 
         public async Task<Room> CreateAsync(Guid categoryId, short number, string picture)

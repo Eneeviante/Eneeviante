@@ -26,16 +26,15 @@ namespace ITechArtBooking.Controllers
         /*Просмотреть информацию о бронировании номеров в отелях*/
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync(int pageSize = 2, int pageNumber = 1)
         {
-            var bookings = await bookingService.GetAllAsync();
+            var bookings = await bookingService.GetAllAsync(pageSize, pageNumber);
 
             if (bookings == null) {
-                return NotFound();
+                return BadRequest("Invalid page number");
             }
-            else {
-                return new ObjectResult(bookings);
-            }
+
+            return new ObjectResult(bookings);
         }
 
         /*Бронировать номер в отеле на определенный срок*/

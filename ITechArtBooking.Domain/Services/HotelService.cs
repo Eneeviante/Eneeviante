@@ -18,9 +18,9 @@ namespace ITechArtBooking.Domain.Services
             hotelRepository = _hotelRepository;
         }
 
-        public async Task<IEnumerable<Hotel>> GetAllAsync()
+        public async Task<IEnumerable<Hotel>> GetAllAsync(int pageSize, int pageNumber)
         {
-            return await hotelRepository.GetAllAsync();
+            return await hotelRepository.GetAllAsync(pageSize, pageNumber);
         }
 
         public async Task<Hotel> CreateAsync(string name, string description, int starNumber)
