@@ -67,8 +67,18 @@ namespace ITechArtBooking.Infrastucture.Repositories
             Room room = await GetAsync(id);
 
             if (room != null) {
-                Context.Rooms.Remove(room);
-                await Context.SaveChangesAsync();
+                var transaction = await Context.Database.BeginTransactionAsync();
+                try {
+                    System.IO.File.Delete(room.Picture);
+
+                    Context.Rooms.Remove(room);
+                    await Context.SaveChangesAsync();
+
+                    transaction.Commit();
+                }
+                catch (Exception) {
+                    return null;
+                }
             }
 
             return room;

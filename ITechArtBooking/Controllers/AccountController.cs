@@ -28,7 +28,7 @@ namespace ITechArtBooking.Controllers
             accountService = _accountService;
         }
 
-        [HttpPost("/register")]
+        [HttpPost("/register, {email}, {password}")]
         public async Task<ActionResult> Register(string email, string firstName,
             string middleName, string lastName, string password)
         {

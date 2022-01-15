@@ -6,7 +6,7 @@ using ITechArtBooking.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using ITechArtBooking.Helper;
 using ITechArtBooking.Domain.Services.ServiceInterfaces;
-using System.Text.RegularExpressions;
+using System.Drawing;
 
 namespace ITechArtBooking.Controllers
 {
@@ -49,8 +49,8 @@ namespace ITechArtBooking.Controllers
         [HttpPost("{categoryId}, {number}, {picture}")]
         public async Task<IActionResult> CreateAsync(Guid categoryId, short number, string picture)
         {
-            if (!Regex.IsMatch(picture, @"^(?:[a-zA-Z]\:|\\\\[\w\.]+\\[\w.$]+)\\(?:[\w]+\\)*\w([\w.])+$")) {
-                return BadRequest("Invalid path to the picture");
+            if (!System.IO.File.Exists(picture)) {
+                return BadRequest("Invalid path to the picture or file does not exist");
             }
 
             var newRoom = await roomService.CreateAsync(categoryId, number, picture);
@@ -68,7 +68,7 @@ namespace ITechArtBooking.Controllers
             var deletedRoom = await roomService.DeleteAsync(roomId);
 
             if (deletedRoom == null) {
-                return BadRequest("Invalid room id");
+                return BadRequest("Invalid room id or couldn't delete image");
             }
 
             return new ObjectResult(deletedRoom);

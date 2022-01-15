@@ -25,6 +25,7 @@ namespace ITechArtBooking.Domain.Services
 
         public async Task<IEnumerable<Room>> GetAllByUserAsync(Guid userId)
         {
+            
             return await roomRepository.GetAllByUserAsync(userId);
         }
 
