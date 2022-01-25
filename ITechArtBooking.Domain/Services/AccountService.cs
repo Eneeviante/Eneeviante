@@ -39,6 +39,9 @@ namespace ITechArtBooking.Domain.Services
             }
             await _userManager.AddToRoleAsync(user, "User");
 
+            EmailService emailService = new EmailService();
+            await emailService.SendEmailAsync(email, "Registration", "You have successfully registered!");
+
             return user;
         }
 
@@ -99,6 +102,10 @@ namespace ITechArtBooking.Domain.Services
         {
             var user = await _userManager.FindByIdAsync(userId.ToString());
             await _userManager.DeleteAsync(user);
+
+            EmailService emailService = new EmailService();
+            await emailService.SendEmailAsync(user.Email, "Delete account", "Your account has been successfully deleted!");
+
             return user;
         }
     }
